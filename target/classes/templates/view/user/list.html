@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>用户</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/resources/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="/resources/css/public.css" media="all"/>
+</head>
+<body class="childrenBody">
+<form class="layui-form">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">姓名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="姓名" id="realname">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">手机号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="手机号" id="phone">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">地址</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="地址" id="address">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">身份证号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="身份证号" id="idCard">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">登录名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="登录名" id="loginName">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">性别</label>
+                    <div class="layui-input-inline">
+                        <select name="modules" id="sex">
+                            <option value="">选择性别</option>
+                            <option value="1">男</option>
+                            <option value="2">女</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <button class="layui-btn" id="searchBtn" type="button">搜索</button>
+                    <button class="layui-btn layui-btn-primary" type="reset" id="reset">重置</button>
+                </div>
+            </div>
+        </form>
+    </blockquote>
+
+    <table id="dataTable" lay-filter="dataTableFilter"></table>
+
+    <script type="text/html" id="addUserTpl">
+        <form class="layui-form layui-form-pane" style="margin: 10px">
+            <div class="layui-inline">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="loginName" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">手机号</label>
+                    <div class="layui-input-inline">
+                        <input type="tel" name="phone" lay-verify="required|phone" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">真实姓名</label>
+                    <div class="layui-input-inline">
+                        <input type="tel" name="realname" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">身份证号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="idCard" lay-verify="required|idCard" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">性别</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="sex" value="1" title="男" checked>
+                        <input type="radio" name="sex" value="2" title="女">
+<!--                        <%&#45;&#45;                <input type="radio" name="sex" value="禁" title="禁用" disabled="">&#45;&#45;%>-->
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">地址</label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="请输入地址" name="address" class="layui-textarea"></textarea>
+                    </div>
+                </div>
+            </div>
+            <button type="button" style="display: none" id="subBtn" lay-submit lay-filter="subBtnFilter"></button>
+        </form>
+    </script>
+
+    <script type="text/html" id="headBtns">
+        <button class="layui-btn layui-btn-sm" lay-event="add2" id="add2" type="button">
+            <i class="layui-icon layui-icon-add-1"></i>
+            新增
+        </button>
+        <button class="layui-btn layui-btn-sm" lay-event="delete2" id="delete2" type="button">
+            <i class="layui-icon layui-icon-delete"></i>
+            删除
+        </button>
+
+    </script>
+
+    <script type="text/html" id="rowBtns">
+        <button class="layui-btn layui-btn-sm" lay-event="resetPwd">
+            <i class="layui-icon layui-icon-refresh"></i>
+            重置密码
+        </button>
+        <button class="layui-btn layui-btn-sm" lay-event="setRole">
+            <i class="layui-icon layui-icon-set"></i>
+            设置角色
+        </button>
+    </script>
+
+</form>
+</script>
+
+<script type="text/html" id="resetPasswordTpl">
+    <form class="layui-form layui-form-pane" style="margin: 10px">
+        <div class="layui-form-item">
+
+            <label class="layui-form-label">旧密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="usedPassword" id="usedPassword" placeholder="请输入旧密码" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">新密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="Password" id="Password" placeholder="请输入旧密码" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">再次输入新密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="newPassword" id="newPassword" placeholder="请输入旧密码" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <button type="button" style="display: none" id="subBtn3" lay-submit lay-filter="subBtnFilter2"></button>
+    </form>
+</script>
+
+<!--<%&#45;&#45; 设置角色的模板 &#45;&#45;%>-->
+<script type="text/html" id="setRoleTpl" >
+    <form class="layui-form layui-form-pane" style="padding-left: 40px" id="allRoles" lay-filter="setRoleFilter">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">id号</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="id" readonly="readonly" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">登录名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="loginName" readonly="readonly" lay-verify="required" autocomplete="off" class="layui-input"
+                    >
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">角色</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="role" value="1" title="管理员" checked>
+                    <input type="radio" name="role" value="2" title="测试人员">
+                    <input type="radio" name="role" value="3" title="业务员">
+<!--                    <%&#45;&#45;                <input type="radio" name="sex" value="禁" title="禁用" disabled="">&#45;&#45;%>-->
+                </div>
+
+            </div>
+        </div>
+        <button type="button" style="display: none" id="subBtnRole" lay-submit lay-filter="subBtnFilterRole"></button>
+    </form>
+</script>
+
+<script type="text/html" id="deleteAlert">
+    <button data-method="offset" data-type="auto" class="layui-btn layui-btn-normal">至少选择一个删除</button>
+</script>
+
+
+<script type="text/javascript" src="/resources/layui/layui.js"></script>
+<script>
+    layui.use(['table', 'jquery', 'layer', 'form'], function () {
+
+        let table = layui.table;
+        let $ = layui.jquery;
+        let layer = layui.layer;
+        let form = layui.form;
+        //渲染数据表格
+        //表格参数
+        let tabOps = {
+            id: "dataTableId",
+            elem: "#dataTable",
+            url:  "../sysuser/page.do",
+            page: true,//开启分页
+            toolbar: "#headBtns",//头工具栏
+            cols: [
+                [
+                {type: "checkbox"},
+                {field: "id",title: "id号"},
+                {field: "realname", title: "姓名"},
+                {field: "loginName", title: "登录名"},
+                {field: "phone", title: "电话", minWidth: 100},
+                {field: "idCard", title: "身份证", minWidth: 160},
+                {
+                    field: "sex", title: "性别", width: 80, templet: function (d) {
+                        let sex = d.sex;
+                        if (sex == 1) {
+                            return "男";
+                        } else if (sex == 2) {
+                            return "女";
+                        } else {
+                            return "不详";
+                        }
+                    }
+                },
+                {field: "address", title: "地址", minWidth: 80},
+                {
+                    title: "头像", width: 80, templet: function (d) {
+                        let img = d.img;
+                        return "<button class='layui-btn layui-btn-xs' onclick=showUserImg(\'" + img + "\')>查看</button>"
+                    }
+                },
+                {field: "createTime", title: "创建时间", width: 120},
+                {title: "操作", toolbar: "#rowBtns", minWidth: 230, fixed: "right"}
+            ]
+            ],//列数据
+            parseData: function (rs) {
+                console.log(rs)
+                return {
+                    code: rs.code,
+                    msg: rs.msg,
+                    count: rs.data.total,
+                    data: rs.data.list
+                }
+            },
+            response: {
+                statusCode: 200
+            }
+        };
+
+        let tabIns = table.render(tabOps);
+
+        $("#searchBtn").click(function () {
+            let realname = $("#realname").val();
+            let phone = $("#phone").val();
+            let address = $("#address").val();
+            let idCard = $("#idCard").val();
+            let loginName = $("#loginName").val();
+            let sex = $('#sex').val();
+            tabIns.reload({//重新加载
+                where: {
+                    "realname": realname,
+                    "phone": phone,
+                    "address": address,
+                    "idCard": idCard,
+                    "loginName": loginName,
+                    "sex": sex
+                }
+            })
+        });
+
+        $('#reset').click(function () {
+            $('#searchBtn').click();
+        })
+
+        function add() {
+            //弹出层的参数
+            let layOps = {
+                title: "新增用户",
+                type: 1,
+                content: $('#addUserTpl').html(),
+                area: ['650px', '400px'],
+                success: function (layero, index) {
+                    form.render("radio");
+                    //表单提交监听
+                    form.on("submit(subBtnFilter)", function (d) {
+                        let formData = d.field;
+                        $.post( "/sysuser/add.do", formData, function (rs) {
+                            layer.msg(rs.msg);
+                            if (rs.code != 200) {
+                                return false;
+                            }
+                            layer.close(index);
+                            $('#searchBtn').click()
+                        })
+                        return false;//阻止默认提交行为
+                    })
+                },
+                btn: ['确认', '取消'],
+                btnAlign: "c",
+                yes: function (index, layero) {
+                    //点击隐藏的提交按钮  触发 表单提交监听
+                    $('#subBtn').click();
+                }
+            };
+            layer.open(layOps);
+        }
+
+        function delete2(Data) {
+            layer.confirm("确定要删除吗？", function (index) {
+                $.post( "/sysuser/delete.do", {array: Data}, function (rs) {
+                    layer.msg(rs.msg);
+                    if (rs.code != 200) {
+                        return false;
+                    }
+                    layer.close(index);//关闭弹出层
+                    $('#searchBtn').click();//重载表格
+                })
+                return false;
+            })
+        }
+
+        table.on("toolbar(dataTableFilter)", function (d) {
+            let event = d.event;
+            if (event === "add2") {
+                add();
+            } else if (event === "delete2") {
+                let data = table.checkStatus('dataTableId');
+                // console.log(data);
+                // console.log("data.length->"+data.length)
+                if (data.data.length === 0) {
+                    // console.log("傻逼");
+                    layer.confirm("请选择要删除的行");
+                } else {
+                    console.log(data.data);// 选中的具体数据
+                    console.log(data.isAll);//是否全选 true 全选 false 不
+                    let array = [];
+                    for (let i = 0; i < data.data.length; i++) {
+                        array[i] = data.data[i].id;
+                    }
+                    console.log(array);
+                    let Data = JSON.stringify(array);
+                    delete2(Data);
+                }
+            }else if (event==="export"){
+                console.log("选择了导出");
+                userExport();
+            }
+
+        });
+
+        function  userExport(){
+            let loginName = $("#loginName").val();
+            let phone = $("#phone").val();
+            let address = $("#address").val();
+            let idCard=$('#idCard').val();
+            let sex=$('#sex').val();
+            let realname=$('#realname').val();
+            location.href="/sysuser/export.do?loginName="+loginName+
+                "&idCard"+idCard+"&realname"+realname+
+                "&phone="+phone+"&address="+address+"&sex="+sex;
+        }
+
+        // $('#add2').click(function (){
+        //     add();
+        // })
+        //
+        // $('#delete2').click(function (d){
+        //     let data=table.checkStatus('dataTableId');
+        //     if (data==null){
+        //         layer.confirm("至少选择一行");
+        //     }else {
+        //         console.log(data.data);// 选中的具体数据
+        //         console.log(data.isAll);//是否全选 true 全选 false 不
+        //         let array=[];
+        //         for (let i=0;i<data.data.length;i++){
+        //             array[i]=data.data[i].id;
+        //         }
+        //         console.log(array);
+        //         let Data=JSON.stringify(array);
+        //         delete2(Data);
+        //     }
+        // })
+
+        function resetPwd(rowData) {
+            layer.confirm("确定要重置密码吗？", function (index) {
+                $.get( "/sysuser/reset.do", {id: rowData.id}, function (rs) {
+                    layer.msg(rs.msg);
+                    layer.close(index);//关闭弹出层
+                    $('#searchBtn').click();//重载表格
+                })
+
+            })
+        }
+
+        // table.on("tool(dataTableFilter)",function (d){
+        //     let event=d.event;
+        //     let rowData=d.data;
+        //     if(event=="resetPwd"){
+        //         resetPwd(rowData);
+        //     }
+        // })
+
+        table.on("tool(dataTableFilter)", function (d) {
+            let event = d.event;
+            let rowData = d.data;
+            if (event === "resetPwd") {
+                resetPassWord(rowData);
+            } else if (event === "setRole") {
+                setRole(rowData);
+            }
+        })
+
+        function setRole(rowData) {
+            let RoleOps = {
+                title: "设置角色",
+                type: 1,
+                content: $('#setRoleTpl').html(),
+                area: ['400px', '400px'],
+                success: function (layero,index) {
+                    form.val("setRoleFilter",rowData);
+                    form.render("radio");
+                    form.on("submit(subBtnFilterRole)", function (d) {
+                        let formData = d.field;
+                        console.log(formData)
+                        $.post("../role/setRole.do", formData, function (rs) {
+                            layer.msg(rs.msg);
+                            layer.close(index);
+                            if (rs.msg != 200) {
+                                return false;
+                            }
+                            $('#searchBtn').click()
+                        })
+                        return false;
+                    })
+                },
+                btn: ['确认', '取消'],
+                btnAlign: "c",
+                yes: function (index, layero) {
+                    $('#subBtnRole').click();
+                }
+            };
+            layer.open(RoleOps);
+        }
+
+        function resetPassWord(rowData) {
+            let layOps = {
+                title: "修改密码",
+                type: 1,
+                content: $('#resetPasswordTpl').html(),
+                area: ['300px', '400px'],
+                success: function (layero, index) {
+                    form.render("radio");
+                    form.on("submit(subBtnFilter2)", function (d) {
+                        let usedPassword = $('#usedPassword').val();
+                        let Password = $('#Password').val();
+                        let newPassword = $('#newPassword').val();
+                        if (usedPassword === Password) {
+                            layer.confirm("旧密码与新密码一致，请重新输入");
+                        }
+                        if (Password != newPassword) {
+                            layer.confirm("新密码之间不一致，请重新输入");
+                        }
+                        if (usedPassword != Password && Password === newPassword) {
+                            let formData = d.field;
+                            console.log(formData);
+                            $.post( "/sysuser/resetPassword.do", {//传值旧密码与新密码
+                                'usedPassword': usedPassword,
+                                'Password': Password,
+                                'newPassword': newPassword,
+                                id: rowData.id
+                            }, function (rs) {
+                                layer.msg(rs.msg);
+                                if (rs.code != 200) {
+                                    return false;
+                                }
+                                layer.close(index);
+                                $('#searchBtn').click()
+                            })
+                            return false;//阻止默认提交行为
+                        }
+                    })
+                },
+                btn: ['确认', '取消'],
+                btnAlign: "c",
+                yes: function (index, layero) {
+                    //点击隐藏的提交按钮  触发 表单提交监听
+                    $('#subBtn3').click();
+                }
+            };
+            layer.open(layOps);
+        }
+
+        /*
+        用户头像
+         */
+
+        window.showUserImg = function (url) {
+            let imgData = {
+                "title": "用户头像", //相册标题
+                "start": 0, //初始显示的图片序号，默认0
+                "data": [   //相册包含的图片，数组格式
+                    {
+                        "alt": "用户头像",
+                        "src": + "/" + url, //原图地址
+                        "thumb": url //缩略图地址
+                    }
+                ]
+            }
+            layer.photos({
+                photos: imgData
+            });
+        }
+
+    })
+</script>
+</body>
+</html>

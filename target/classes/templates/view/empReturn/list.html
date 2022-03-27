@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>维修工维修管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/resources/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="/resources/css/public.css" media="all"/>
+</head>
+<body class="childrenBody">
+<form class="layui-form">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">id号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="id号" id="id">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">姓名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="姓名" id="name">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">车牌号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="车牌号" id="num">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <button class="layui-btn" id="searchBtn" type="button">搜索</button>
+                    <button class="layui-btn layui-btn-primary" type="reset" id="reset">重置</button>
+                </div>
+            </div>
+        </form>
+    </blockquote>
+
+    <table id="dataTable" lay-filter="dataTableFilter"></table>
+
+    <script type="text/html" id="headBtns">
+<!--        <button class="layui-btn layui-btn-sm" lay-event="add" id="add" type="button">-->
+<!--            <i class="layui-icon layui-icon-add-1"></i>-->
+<!--            新增-->
+<!--        </button>-->
+<!--        <button class="layui-btn layui-btn-sm" lay-event="delete" id="delete" type="button">-->
+<!--            <i class="layui-icon layui-icon-delete"></i>-->
+<!--            删除-->
+<!--        </button>-->
+    </script>
+
+    <script type="text/html" id="rowBtns">
+        <button class="layui-btn layui-btn-sm" lay-event="edit">
+            <i class="layui-icon layui-icon-refresh"></i>
+            修改
+        </button>
+    </script>
+
+    <script type="text/html" id="editEmpReturnTpl">
+        <form class="layui-form layui-form-pane" style="margin: 10px" lay-filter="editFilter">
+            <div class="layui-inline">
+                <label class="layui-form-label">姓名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="name" disabled id="formName" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">手机号</label>
+                    <div class="layui-input-inline">
+                        <input type="tel" name="phone"  disabled  id="formPhone" lay-verify="required|phone" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div style="height: 30px"></div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">身份证号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="idCard"  disabled  id="formIdCard" lay-verify="required|idCard" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">车牌号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="num"  disabled  id="formNum" lay-verify="required" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div style="height: 30px"></div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">问题</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="problem" id="formProblem" lay-verify="required" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div style="height: 30px"></div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">维修结束时间</label>
+                    <div class="layui-input-block" style="width:514px">
+                        <input type="text"  name="endTime"  id="endTime" class="layui-input"/>
+                    </div>
+                </div>
+
+            </div>
+            <button type="button" style="display: none" id="subBtn" lay-submit lay-filter="subBtnFilter"></button>
+        </form>
+    </script>
+</form>
+<script type="text/javascript" src="/resources/layui/layui.js"></script>
+<script>
+
+    layui.use(['table', 'jquery', 'layer', 'form', 'upload', 'laydate'], function () {
+        let table = layui.table;
+        let $ = layui.jquery;
+        let layer = layui.layer;
+        let form = layui.form;
+        let upload = layui.upload;
+        let laydate = layui.laydate;
+        //渲染数据表格
+        //表格参数
+        let tabOps = {
+            id: "dataTableId",
+            elem: "#dataTable",
+            url: "../empReturn/page.do",
+            page: true,//开启分页
+            toolbar: "#headBtns",//头工具栏
+            cols: [
+                [
+                    {type: "checkbox"},
+                    {field: "id", title: "id号"},
+                    {
+                        field: "name", templet: function (data) {
+                            return data.empMaintainer.name
+                        }, title: "姓名", minWidth: 120
+                    },
+                    {
+                        field: "phone", templet: function (data) {
+                            return data.empMaintainer.phone
+                        }, title: "手机号码", minWidth: 120
+                    },
+                    {
+                        field: "idCard", templet: function (data) {
+                            return data.empMaintainer.idCard
+                        }, title: "身份证号", minWidth: 120
+                    },
+                    {
+                        field: "num", templet: function (data) {
+                            return data.busReturn.num
+                        }, title: "车牌号", minWidth: 120
+                    },
+                    {
+                        field: "problem", templet: function (data) {
+                            return data.busReturn.problem
+                        }, title: "问题", minWidth: 120
+                    },
+                    // {field: "idCard", title: "身份证", minWidth: 160},
+                    // {field: "address", title: "地址", minWidth: 80},
+                    {field: "beginTime", title: "开始时间", width: 120},
+                    {field: "endTime", title: "结束时间", width: 120},
+                    {title: "操作", toolbar: "#rowBtns", minWidth: 230, fixed: "right"}
+                ]
+
+            ],//列数据
+            parseData: function (rs) {
+                console.log(rs.data.list)
+                return {
+                    code: rs.code,
+                    msg: rs.msg,
+                    count: rs.data.total,
+                    data: rs.data.list
+                }
+            },
+            response: {
+                statusCode: 200
+            }
+        };
+        /*
+        渲染table
+         */
+        let tabIns = table.render(tabOps);
+
+        $("#searchBtn").click(function () {
+            let id = $("#id").val();
+            let num = $("#num").val();
+            let name = $("#name").val();
+            tabIns.reload({//重新加载
+                where: {
+                    "id": id,
+                    "num": num,
+                    "name": name
+                }
+            })
+        });
+
+        $('#reset').click(function () {
+            $('#searchBtn').click();
+        })
+
+
+        table.on("tool(dataTableFilter)", function (d) {
+            let event = d.event;
+            let rowData = d.data;
+            if (event === "edit") {
+                edit(rowData)
+            }
+        })
+
+
+        function edit(rowDate) {
+
+            //弹出层的参数
+            let layOps = {
+                title: "修改维修工维修车辆模块",
+                type: 1,
+                content: $('#editEmpReturnTpl').html(),
+                area: ['650px', '400px'],
+                success: function (layero, index) {
+                    form.render("radio");
+
+                    laydate.render({
+                        elem:"#endTime",
+                    })
+                    // form.val('editFilter',rowDate)
+                    console.log(rowDate)
+                    $('#formNum').val(rowDate.busReturn.num)
+                    $('#formName').val(rowDate.empMaintainer.name)
+                    $('#formIdCard').val(rowDate.empMaintainer.idCard)
+                    $('#formPhone').val(rowDate.empMaintainer.phone)
+                    $('#formProblem').val(rowDate.busReturn.problem)
+                    $('#endTime').val(rowDate.endTime)
+                    form.on("submit(subBtnFilter)", function (d) {
+                        let formData = d.field;
+                        formData.id=rowDate.id
+                        formData.endTime=new Date($('#endTime').val())
+                        formData.returnId=rowDate.busReturn.id
+                        formData.problem=$('#formProblem').val()
+                        $.post( "/empReturn/edit.do", formData, function (rs) {
+                            layer.msg(rs.msg);
+                            if (rs.code != 200) {
+                                return false;
+                            }
+                            layer.close(index);
+                            $('#searchBtn').click()
+                        })
+                        return false;//阻止默认提交行为
+                    })
+                },
+                btn: ['确认', '取消'],
+                btnAlign: "c",
+                yes: function (index, layero) {
+                    //点击隐藏的提交按钮  触发 表单提交监听
+                    $('#subBtn').click();
+                }
+            };
+            layer.open(layOps);
+        }
+
+
+    })
+</script>
+</body>
+</html>

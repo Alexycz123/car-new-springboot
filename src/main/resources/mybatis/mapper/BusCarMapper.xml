@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycz.mapper.BusCarMapper">
+    <resultMap id="CarResultMap" type="com.ycz.vo.BusCarVo">
+        <id property="id" column="id"/>
+        <result property="num" column="num"/>
+        <result property="type" column="type"/>
+        <result property="color" column="color"/>
+        <result property="price" column="price"/>
+        <result property="rentPrice" column="rent_price"/>
+        <result property="desposit" column="desposit"/>
+        <result property="isRent" column="is_rent"/>
+        <result property="descp" column="descp"/>
+        <result property="img" column="img"/>
+        <result property="version" column="version"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+    <sql id="CarID">
+        id,num,type,color,rent_price,price,desposit,is_rent,descp,img,version,create_time
+    </sql>
+
+    <select id="selectCarByNum" resultMap="CarResultMap">
+        select <include refid="CarID"></include>  from bus_car
+        where num=#{num}
+    </select>
+
+    <insert id="insertCar">
+        insert into bus_car (num,type,color,rent_price,price,desposit,is_rent,descp,img,version,create_time)
+        values (#{num},#{type},#{color},#{rentPrice},#{price},#{desposit},#{isRent},#{descp},#{img},#{version},#{createTime})
+    </insert>
+
+    <select id="selectCarList" resultMap="CarResultMap">
+        select <include refid="CarID"></include>
+        from bus_car
+        <where>
+            <if test="id!=null and id!=''">
+                and id=#{id}
+            </if>
+            <if test="num!=null and num!=''">
+                and num like concat('%',#{num},'%')
+            </if>
+            <if test="color!=null and color!=''">
+                and color like concat('%',#{color},'%')
+            </if>
+            <if test="type!=null and type!=''">
+                and type=#{type}
+            </if>
+            <if test="maxPrice!=null and maxPrice!=''">
+                and #{maxPrice} >=price
+            </if>
+            <if test="minPrice!=null and minPrice!=''">
+                and price >= #{minPrice}
+            </if>
+            <if test="minRentPrice!=null and minRentPrice!=''">
+                and rent_price >= #{minRentPrice}
+            </if>
+            <if test="maxRentPrice!=null and maxRentPrice!=''">
+                and #{maxRentPrice} >=rent_price
+            </if>
+            <if test="isRent!=null and isRent!=''">
+                and is_rent=#{isRent}
+            </if>
+            <if test="descp!=null and descp!=''">
+                and descp like concat('%',#{descp},'%')
+            </if>
+        </where>
+    </select>
+
+
+
+    <select id="selectCarList2" resultMap="CarResultMap">
+        select <include refid="CarID"></include> from bus_car
+    </select>
+
+    <select id="selectCarAll" resultMap="CarResultMap">
+        select <include refid="CarID"></include>  from bus_car
+        where num=#{num}
+        and type=#{type}
+        and color=#{color}
+        and rent_price=#{rentPrice}
+        and price=#{price}
+        and desposit=#{desposit}
+        and is_rent=#{isRent}
+        and descp=#{descp}
+        and img=#{img}
+        and version=#{version}
+        and id=#{id}
+    </select>
+
+    <update id="updateCar">
+        update bus_car set num=#{num},
+                           type=#{type},
+                           color=#{color},
+                           rent_price=#{rentPrice},
+                           price=#{price},
+                           desposit=#{desposit},
+                           is_rent=#{isRent},
+                           descp=#{descp},
+                           img=#{img},
+                           create_time=#{createTime},
+                           version=#{version}
+        where id=#{id}
+
+    </update>
+
+    <delete id="deleteCar">
+        delete from bus_car where id=#{id}
+    </delete>
+
+   <update id="updateCar_isRent_version_ByID">
+       update bus_car set
+            is_rent = #{isRent} ,
+            version = version + 1
+            where id = #{id} and
+            version = #{version}
+   </update>
+</mapper>

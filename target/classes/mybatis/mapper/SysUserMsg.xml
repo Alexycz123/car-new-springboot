@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycz.mapper.SysUserMsgMapper">
+    <resultMap id="MsgResult" type="com.ycz.domain.SysUserMsg">
+        <result column="id" property="id"/>
+        <result column="send_user_id" property="sendUserId"/>
+        <result column="receive_user_id" property="receiveUserId"/>
+        <result column="send_msg" property="sendMsg"/>
+        <result column="send_time" property="sendTime"/>
+    </resultMap>
+
+    <sql id="msgColumn">
+        id,send_user_id,receive_user_id,send_msg,send_time
+    </sql>
+
+    <insert id="insertMsg">
+        insert into sys_user_msg (send_user_id,receive_user_id,send_msg,send_time)
+        values (#{sendUserId},#{receiveUserId},#{sendMsg},#{sendTime});
+    </insert>
+
+    <select id="selectMsg" resultMap="MsgResult">
+        select send_user_id,receive_user_id,send_msg,send_time
+        from sys_user_msg
+        where send_user_id in (#{sendUserId},#{receiveUserId})
+          AND receive_user_id IN (#{sendUserId},#{receiveUserId})
+        limit #{page},#{limit}
+    </select>
+
+    <select id="selectMsgCount" resultType="java.lang.Integer">
+        select COUNT(id)
+        from sys_user_msg
+        where send_user_id in (#{sendUserId},#{receiveUserId})
+          AND receive_user_id IN (#{sendUserId},#{receiveUserId})
+
+    </select>
+
+
+</mapper>

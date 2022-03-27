@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>客户</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/resources/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="/resources/css/public.css" media="all"/>
+</head>
+<body class="childrenBody">
+<form class="layui-form">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">姓名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="姓名" id="name">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">手机号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="手机号" id="phone">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">地址</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="地址" id="address">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">性别</label>
+                    <div class="layui-input-inline">
+                        <select name="modules" id="sex">
+                            <option value="">选择性别</option>
+                            <option value="1">男</option>
+                            <option value="2">女</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn" id="searchBtn" type="button">搜索</button>
+                <button class="layui-btn layui-btn-primary" type="reset" id="reset">重置</button>
+            </div>
+            </div>
+        </form>
+    </blockquote>
+    <table id="dataTable" lay-filter="dataTableFilter"></table>
+</form>
+
+<script type="text/html" id="headBtns">
+    <button class="layui-btn layui-btn-sm" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增
+    </button>
+    <button class="layui-btn layui-btn-sm" lay-event="export">
+        <i class="layui-icon layui-icon-release"></i>
+        导出
+    </button>
+    <button class="layui-btn layui-btn-sm" lay-event="import">
+        <i class="layui-icon layui-icon-upload"></i>
+        导入
+    </button>
+    <button class="layui-btn layui-btn-sm" lay-event="delete2" id="delete2">
+        <i class="layui-icon layui-icon-delete"></i>
+        删除
+    </button>
+</script>
+
+<script type="text/html" id="rowBtns">
+    <button class="layui-btn layui-btn-sm" lay-event="edit" type="button">
+        <i class="layui-icon layui-icon-edit"></i>
+        修改
+    </button>
+</script>
+
+</script>
+
+<!--编辑客户的模板-->
+<script type="text/html" id="editCustomerTpl">
+    <form class="layui-form layui-form-pane" style="margin: 10px" lay-filter="editFormFilter">
+        <div class="layui-inline">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-inline">
+                <input type="text" name="name" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">手机号</label>
+                <div class="layui-input-inline">
+                    <input type="tel" name="phone"  lay-verify="required|phone" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item"></div>
+            <div class="layui-inline">
+                <label class="layui-form-label">身份证号</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="idCard"  lay-verify="required|idCard" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item"></div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">性别</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="sex" value="1" title="男" checked>
+                    <input type="radio" name="sex" value="2" title="女">
+<!--                    <%&#45;&#45;                <input type="radio" name="sex" value="禁" title="禁用" disabled="">&#45;&#45;%>-->
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">地址</label>
+                <div class="layui-input-block">
+                    <textarea placeholder="请输入地址" name="address" class="layui-textarea"></textarea>
+                </div>
+            </div>
+        </div>
+        <button type="button" style="display: none" id="subBtnCustomer" lay-submit lay-filter="subBtnFilter"></button>
+    </form>
+</script>
+<!--上传文件的模板-->
+<script type="text/html" id="uploadTpl" >
+    <form class="layui-form-pane layui-form" enctype="multipart/form-data" style="padding-left: 70px;padding-top: 30px">
+        <div class="layui-form-item">
+            <label class="layui-form-label">客户文件</label>
+            <div class="layui-inline">
+                <button class="layui-btn layui-btn-normal" id="chooseBtn" type="button">选择文件</button>
+                <button class="layui-btn" id="uploadBtn" type="button">上传文件</button>
+            </div>
+        </div>
+    </form>
+</script>
+<!--<%&#45;&#45;<script type="text/html" id="editCustomerTpl" lay-filter="editFormFilter">&#45;&#45;%>-->
+<!--<%&#45;&#45;    <form class="layui-form layui-form-pane" style="margin: 10px">&#45;&#45;%>-->
+<!--    <%&#45;&#45;        <div class="layui-inline">&#45;&#45;%>-->
+<!--        <%&#45;&#45;            <label class="layui-form-label">姓名</label>&#45;&#45;%>-->
+<!--        <%&#45;&#45;            <div class="layui-input-inline">&#45;&#45;%>-->
+<!--            <%&#45;&#45;                <input type="text" name="name" lay-verify="required" id="Editname" autocomplete="off" class="layui-input">&#45;&#45;%>-->
+<!--            <%&#45;&#45;            </div>&#45;&#45;%>-->
+<!--        <%&#45;&#45;            <div class="layui-inline">&#45;&#45;%>-->
+<!--            <%&#45;&#45;                <label class="layui-form-label">手机号</label>&#45;&#45;%>-->
+<!--            <%&#45;&#45;                <div class="layui-input-inline">&#45;&#45;%>-->
+<!--                <%&#45;&#45;                    <input type="tel" name="phone" id="Editphone" lay-verify="required|phone" autocomplete="off" class="layui-input">&#45;&#45;%>-->
+<!--                <%&#45;&#45;                </div>&#45;&#45;%>-->
+<!--            <%&#45;&#45;            </div>&#45;&#45;%>-->
+<!--        <%&#45;&#45;            <div class="layui-form-item"></div>&#45;&#45;%>-->
+<!--        <%&#45;&#45;            <div class="layui-inline">&#45;&#45;%>-->
+<!--            <%&#45;&#45;                <label class="layui-form-label">身份证号</label>&#45;&#45;%>-->
+<!--            <%&#45;&#45;                <div class="layui-input-inline">&#45;&#45;%>-->
+<!--                <%&#45;&#45;                    <input type="text" name="idCard" id="EditidCard" lay-verify="required|idCard" autocomplete="off" class="layui-input">&#45;&#45;%>-->
+<!--                <%&#45;&#45;                </div>&#45;&#45;%>-->
+<!--            <%&#45;&#45;            </div>&#45;&#45;%>-->
+<!--        <%&#45;&#45;            <div class="layui-form-item"></div>&#45;&#45;%>-->
+<!--        <%&#45;&#45;            <div class="layui-form-item">&#45;&#45;%>-->
+<!--            <%&#45;&#45;                <label class="layui-form-label">性别</label>&#45;&#45;%>-->
+<!--            <%&#45;&#45;                <div class="layui-input-block">&#45;&#45;%>-->
+<!--                <%&#45;&#45;                    <input type="radio" name="sex" value="1" title="男" checked id="EditSex1">&#45;&#45;%>-->
+<!--                <%&#45;&#45;                    <input type="radio" name="sex" value="2" title="女" id="EditSex2">&#45;&#45;%>-->
+<!--                <%&#45;&#45;                    &lt;%&ndash;                <input type="radio" name="sex" value="禁" title="禁用" disabled="">&ndash;%&gt;&#45;&#45;%>-->
+<!--                <%&#45;&#45;                </div>&#45;&#45;%>-->
+<!--            <%&#45;&#45;            </div>&#45;&#45;%>-->
+
+<!--        <%&#45;&#45;            <div class="layui-form-item layui-form-text">&#45;&#45;%>-->
+<!--            <%&#45;&#45;                <label class="layui-form-label">地址</label>&#45;&#45;%>-->
+<!--            <%&#45;&#45;                <div class="layui-input-block">&#45;&#45;%>-->
+<!--                <%&#45;&#45;                    <textarea placeholder="请输入地址" name="address" class="layui-textarea" id="Editaddress"></textarea>&#45;&#45;%>-->
+<!--                <%&#45;&#45;                </div>&#45;&#45;%>-->
+<!--            <%&#45;&#45;            </div>&#45;&#45;%>-->
+<!--        <%&#45;&#45;        </div>&#45;&#45;%>-->
+<!--    <%&#45;&#45;        <button type="button" style="display: none" id="subBtnEdit" lay-submit lay-filter="subBtnEditFilter"></button>&#45;&#45;%>-->
+<!--    <%&#45;&#45;    </form>&#45;&#45;%>-->
+<!--<%&#45;&#45;</script>&#45;&#45;%>-->
+
+<script type="text/javascript" src="/resources/layui/layui.js"></script>
+<script>
+    layui.use(['table','jquery','layer','form','upload'],function () {
+        let table = layui.table;
+        let $ = layui.jquery;
+        let layer = layui.layer;
+        let form = layui.form;
+        let upload=layui.upload;
+        //渲染数据表格
+        //表格参数
+
+        let tabOps = {
+            id:"dataTableId",
+            elem:"#dataTable",//对应上面的table ID的值
+            url:"/buscustomer/page.do",
+            page:true,//开启分页
+            toolbar:"#headBtns",//头工具栏
+            cols:[[
+                {type:"checkbox"},
+                {field:"id",title:"ID号",minWidth: 30},
+                {field:"name",title:"姓名"},
+                {field:"phone",title:"电话"},
+                {field:"idCard",title:"身份证",minWidth:180},
+                {field:"sex",title:"性别",width:80 ,templet:function (d) {
+                        let sex = d.sex;
+                        if (sex == 1){
+                            return "男";
+                        }else if (sex == 2){
+                            return  "女";
+                        }else {
+                            return  "不详";
+                        }
+                        return "<button class='layui-btn layui-btn-xs'>查看</button>"
+                    }},
+                {field:"address",title:"地址"},
+                {field:"createTime",title:"创建时间",width: 120},
+                {field:"updateTime",title:"更新时间",width: 120},
+                {title:"操作",toolbar:"#rowBtns",minWidth: 230,fixed:"right"}
+            ]
+
+            ],//列数据
+            parseData:function (rs) {
+
+                for (let i = 0; i <rs.data.list.length; i++) {
+                    console.log(rs.data.list[i].address)
+                }
+
+                return {
+                    code : rs.code,
+                    msg : rs.msg,
+                    count : rs.data.total,
+                    data : rs.data.list
+
+                }
+            },
+            response:{
+                statusCode:200
+            }
+        };
+
+        let tabIns = table.render(tabOps);
+
+        $("#searchBtn").click(function () {
+            let name = $("#name").val();
+            let phone = $("#phone").val();
+            let address = $("#address").val();
+            let sex=$('#sex').val();
+            tabIns.reload({//重新加载
+                where:{
+                    "name":name,
+                    "phone":phone,
+                    "address":address,
+                    "sex":sex
+                }
+            })
+        });
+
+        /**
+         * 点击重置下面的列表也更新
+         */
+        $('#reset').click(function (){
+            $("#searchBtn").click();
+        })
+
+        /*
+        头工具栏事件
+         */
+
+        function delete2(Data){
+            layer.confirm("确定要删除吗？",function (index){
+                $.post("/buscustomer/delete.do",{array:Data},function (rs){
+                    layer.msg(rs.data);
+                    if(rs.code!=200){
+                        return false;
+                    }
+                    layer.close(index);//关闭弹出层
+                    $('#searchBtn').click();//重载表格
+                })
+                return false;
+            })
+        }
+
+        table.on("toolbar(dataTableFilter)",function (d){
+            let event=d.event;
+            if(event==="add"){
+                add2()
+            }else if(event==="delete2"){
+                let data=table.checkStatus('dataTableId');//对应上面的layer 的ID
+                console.log(data);
+                console.log("data.length->"+data.length)
+                if (data.data.length===0){
+                    //console.log("傻逼");
+                    layer.confirm("请选择要删除的行");
+                }else {
+                    console.log(data.data);// 选中的具体数据
+                    console.log(data.isAll);//是否全选 true 全选 false 不
+                    let array=[];
+                    for (let i=0;i<data.data.length;i++){
+                        array[i]=data.data[i].id;
+                    }
+                    console.log(array);
+                    let Data=JSON.stringify(array);
+                    delete2(Data);
+                }
+            }else if(event==="export"){
+                customerExport();
+            }else if(event==="import"){
+                customerImport()
+            }
+        })
+        /*
+        导入客户数据
+         */
+        function customerImport(){
+            let opt={
+                title:"上传文件",
+                type:1,
+                area: ['480px','200px'],
+                content: $('#uploadTpl').html(),
+                success:function (layero,index){
+                    console.log("文件导出层已经打开");
+                    //初始化文件上传
+                    let uploadOpt={
+                        elem: "#chooseBtn",
+                        url: "/buscustomer/import.do",//处理文件上传的接口
+                        auto:false,//不自动上传
+                        bindAction:"#uploadBtn",//绑定具体的上传按钮
+                        field:"customers",//指定文件上传域名称
+                        accept:"file",//允许上传文件
+
+                        done:function (rs,fileIndex,upload){
+                            layer.msg(rs.msg);
+                            if (rs.code==200){
+                                //关闭弹层
+                                layer.close(index);
+                                $('#searchBtn').click();
+                            }
+                        }
+                    };
+                    upload.render(uploadOpt);
+                }
+
+            }
+            layer.open(opt);
+        }
+
+
+        // 客户导出
+        function  customerExport(){
+            let name = $("#name").val();
+            let phone = $("#phone").val();
+            let address = $("#address").val();
+            let sex=$('#sex').val();
+            location.href="/buscustomer/export.do?name="+name+"&phone="+phone+"&address="+address+"&sex="+sex;
+        }
+
+        // function edit2(rowData){
+        //     console.log("进来了edit")
+        //     let layOps={
+        //         title:"修改客户",
+        //         type:1,
+        //         content: $('#editCustomerTpl').html(),
+        //         area: ['650px','450px'],
+        //         success:function (layero,index){
+        //             $('#Editaddress').val(rowData.address);
+        //             $('#EditidCard').val(rowData.idCard);
+        //             $('#Editname').val(rowData.name);
+        //             $('#Editphone').val(rowData.phone);
+        //             if (rowData.sex===1){
+        //                 $('#EditSex1').attr("checked","checked");
+        //             }else if (rowData.sex===2){
+        //                 $("#EditSex1").removeAttr("checked");
+        //                 $('#EditSex2').attr("checked","checked");
+        //             }else {
+        //                 $("#EditSex1").removeAttr("checked");
+        //                 $("#EditSex2").removeAttr("checked");
+        //             }
+        //             form.render("radio");
+        //             form.on("submit(subBtnEditFilter)",function (d){
+        //                 let formData=d.field;//获取事件
+        //                 formData.id = rowData.id;//获取ID
+        //                 $.post(cxt+"/buscustomer/edit.do",formData,function (rs){
+        //                     layer.msg(rs.msg);
+        //                     layer.close(index);
+        //                     $('#searchBtn').click()
+        //                     if (rs!=200){
+        //                         return false;
+        //                     }
+        //                 })
+        //                 return false;
+        //             })
+        //         },
+        //         btn:['确认','取消'],
+        //         btnAlign: "c",
+        //         yes:function (index,layero){
+        //             //点击隐藏的提交按钮  触发 表单提交监听
+        //             $('#subBtnEdit').click();//编辑的ID
+        //         }
+        //     }
+        //     layer.open(layOps);
+        // }
+
+        function edit2(rowData){
+            //将对象复制一份
+            let ops = new Object();//目标对象
+            Object.assign(ops,layOps);//将layOps 对象复制给 ops 对象
+            ops.success = function(layero,index){//重写成功事件
+                form.render("radio");
+                form.val("editFormFilter",rowData);
+                form.on("submit(subBtnFilter)",function (d) {
+                    let formData = d.field;
+                    formData.id = rowData.id;//获取ID
+                    $.post("/buscustomer/edit.do",formData,function (rs) {
+                        layer.msg(rs.msg);//展示业务消息
+                        if (rs.code != 200){
+                            return false;
+                        }
+                        layer.close(index);//关闭弹层
+                        //刷新表格
+                        $("#searchBtn").click();
+                    })
+                    return false;//阻止默认提交行为
+                })
+            }
+            layer.open(ops);
+        }
+
+        table.on("tool(dataTableFilter)",function (d){
+            let event=d.event;
+            let rowData=d.data;
+            console.log("enter tool");
+            console.log(rowData);
+            edit2(rowData);
+
+        })
+
+
+        let layOps={
+            title:"编辑客户",
+            type: 1,
+            content:$('#editCustomerTpl').html(),
+            area:['650px','450px'],
+            success:function (layero,index){
+                form.render("radio");
+                form.on("submit(subBtnFilter)",function (d){//form表单的监听事件
+                    let formData=d.field;//获取事件的name
+                    $.post("/buscustomer/add.do",formData,function (rs){
+                        layer.msg(rs.msg);
+                        if(rs.code!=200){
+                            return false;
+                        }
+                        layer.close(index);
+                        $('#searchBtn').click()
+                    })
+                    return false;//阻止默认提交行为
+                })
+            },
+            btn:['确认','取消'],
+            btnAlign: "c",
+            yes:function (index,layero){
+                //点击隐藏的提交按钮  触发 表单提交监听
+                $('#subBtnCustomer').click();
+            }
+        }
+
+        function add2(){
+            layer.open(layOps);
+        }
+
+    })
+</script>
+</body>
+</html>

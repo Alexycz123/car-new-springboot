@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>出租</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/resources/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="/resources/css/public.css" media="all"/>
+</head>
+<body class="childrenBody">
+<form class="layui-form">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">id号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="id号" id="id">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">车牌号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="车牌号" id="num">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">身份证</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="身份证" id="idCard">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">车辆类型</label>
+                    <div class="layui-input-inline">
+                        <select name="modules" id="type">
+                            <option value="">选择车辆类型</option>
+                            <option value="1">轿车</option>
+                            <option value="2">SUV</option>
+                            <option value="3">跑车</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">租金</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" class="layui-input" placeholder="￥" id="minRentPrice">
+                    </div>
+
+                    <div class="layui-form-mid">-</div>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" class="layui-input" placeholder="￥" id="maxRentPrice">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">押金</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" class="layui-input" placeholder="￥" id="minDesposit">
+                    </div>
+                    <div class="layui-form-mid">-</div>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" class="layui-input" placeholder="￥" id="maxDesposit">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="时间" id="beginTime">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">是否还车</label>
+                    <div class="layui-input-inline">
+                        <select name="modules" id="flag">
+                            <option value="">选择是否还车</option>
+                            <option value="1">未还车</option>
+                            <option value="2">已还车</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn" id="searchBtn" type="button">搜索</button>
+                    <button class="layui-btn layui-btn-primary" type="reset" id="reset">重置</button>
+                </div>
+            </div>
+        </form>
+    </blockquote>
+
+    <table id="dataTable" lay-filter="dataTableFilter"></table>
+
+    <script type="text/html" id="editTpl" lay-filter="editFilter">
+        <form class="layui-form layui-form-pane" style="padding: 10px" lay-filter="editFilter">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">车牌号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="num" lay-verify="required" lay-reqText="请输入车牌号"
+                                   id="editNum"  readonly="readonly"
+                                   placeholder="车牌号" >
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">是否还车</label>
+                            <div class="layui-input-block" readonly="readonly">
+                                <input type="radio"  disabled name="flag" value="1" title="未还车" id="editIsRent1" readonly="readonly" checked>
+                                <input type="radio" disabled name="flag" value="2" title="已还车" id="editIsRent2" readonly="readonly">
+<!--                                <%&#45;&#45;                <input type="radio" name="sex" value="禁" title="禁用" disabled="">&#45;&#45;%>-->
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">姓名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input" readonly="readonly"
+                                       name="name" lay-verify="required" lay-reqText="请输入姓名" placeholder="姓名" >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">租金</label>
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input"
+                                       name="rentPrice" lay-verify="required" lay-reqText="请输入租金" placeholder="租金" >
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">身份证</label>
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input" readonly="readonly"
+                                       name="idCard" lay-verify="required" lay-reqText="请输入身份证" placeholder="身份证" >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">押金</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input"
+                                   name="desposit" lay-verify="required|number" lay-reqText="请输入押金" placeholder="押金" >
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">开始时间</label>
+                    <div class="layui-input-block" style="width:514px">
+                        <input type="text" id="beginTime2" name="beginTime"  class="layui-input"/>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">结束时间</label>
+                    <div class="layui-input-block" style="width:514px">
+                        <input type="text" id="endTime" name="endTime"  class="layui-input"/>
+                    </div>
+                </div>
+
+            </div>
+            <button type="button" style="display: none" id="subBtnEdit" lay-submit lay-filter="subBtnFilterEdit"></button>
+        </form>
+    </script>
+<!--    <%&#45;&#45; 新增还车记录模板 &#45;&#45;%>-->
+    <script type="text/html" id="returnTpl">
+        <form class="layui-form layui-form-pane" style="margin: 10px" lay-filter="returnFormFilter">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">车牌号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="num" readonly class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">还车时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="returnTime" id="returnTime" lay-verify="required" lay-reqText="请输入还车时间" placeholder="还车时间" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">赔付金额</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="payMoney" lay-verify="required" value="0" lay-reqText="请输入赔付金额" placeholder="赔付金额" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">问题</label>
+                <div class="layui-input-block">
+                    <textarea class="layui-textarea" name="problem" placeholder="问题"></textarea>
+                </div>
+            </div>
+            <button type="button" style="display: none" id="subBtnReturn" lay-submit lay-filter="subBtnFilterReturn"></button>
+        </form>
+    </script>
+
+
+<!--    <%&#45;&#45;头部&#45;&#45;%>-->
+    <script type="text/html" id="headBtns">
+<!--        <button class="layui-btn layui-btn-sm" lay-event="add2" id="add2" type="button">-->
+<!--            <i class="layui-icon layui-icon-add-1"></i>-->
+<!--            新增-->
+<!--        </button>-->
+<!--        <button class="layui-btn layui-btn-sm" lay-event="delete2" id="delete2" type="button">-->
+<!--            <i class="layui-icon layui-icon-delete"></i>-->
+<!--            删除-->
+<!--        </button>-->
+    </script>
+<!--    <%&#45;&#45;行&#45;&#45;%>-->
+    <script type="text/html" id="rowBtns">
+        <button class="layui-btn layui-btn-sm" lay-event="edit">
+            <i class="layui-icon layui-icon-refresh"></i>
+            修改
+        </button>
+        <button class="layui-btn layui-btn-sm" lay-event="return">
+            <i class="layui-icon layui-icon-ok"></i>
+            还车
+        </button>
+    </script>
+
+</form>
+<script type="text/javascript" src="/resources/layui/layui.js"></script>
+<script>
+
+    layui.use(['table','jquery','layer','form','upload','laydate'],function () {
+        let table = layui.table;
+        let $ = layui.jquery;
+        let layer = layui.layer;
+        let form = layui.form;
+        let upload=layui.upload;
+        let laydate=layui.laydate;
+        //渲染数据表格
+        //表格参数
+        let tabOps = {
+            id:"dataTableId",
+            elem:"#dataTable",
+            url:"/rent/page.do",
+            page:true,//开启分页
+            toolbar:"#headBtns",//头工具栏
+            cols:[[
+                {type:"checkbox"},
+                {field:"id",title:"id号",width: 50},
+                {field:"num",title:"车牌号",minWidth: 120},
+                {field:"type",title:"类型",width:80 ,templet:function (d) {
+                        let type = d.type;
+                        if (type === 1){
+                            return "轿车";
+                        }else if (type === 2){
+                            return  "SUV";
+                        }else if(type===3){
+                            return "跑车"
+                        } else {
+                            return  "不详";
+                        }
+                    }},
+                {field:"rentPrice",title:"租金",minWidth: 100},
+                {field:"desposit",title:"押金",minWidth: 100},
+                {field:"flag",title:"是否换车",templet:function (d){
+                        let flag=d.flag;
+                        if(flag==1){
+                            return "未还车"
+                        }else if (flag==2){
+                            return "还车了"
+                        }else {
+                            return "未知"
+                        }
+                    }},
+                {field:"name",title:"姓名"},
+                {field:"idCard",title:"身份证号",minWidth: 180},
+                {field:"userId",title:"负责的ID"},
+                {field:"beginTime",title:"开始时间",width: 120},
+                {field:"endTime",title:"结束时间",width: 120},
+                {title:"操作",toolbar:"#rowBtns",minWidth: 200,fixed:"right"}
+            ]
+
+            ],//列数据
+            parseData:function (rs) {
+                return {
+                    code : rs.code,
+                    msg : rs.msg,
+                    count : rs.data.total,
+                    data : rs.data.list
+                }
+            },
+            response:{
+                statusCode:200
+            }
+        };
+        laydate.render({
+            elem:"#beginTime",
+            range:"~"
+        })
+        let tabIns = table.render(tabOps);
+
+        $("#searchBtn").click(function () {
+            let id = $("#id").val();
+            let type = $("#type").val();
+            let maxRentPrice = $("#maxRentPrice").val();
+            let minRentPrice = $("#minRentPrice").val();
+            let flag = $("#flag").val();
+            let num = $("#num").val();
+            let idCard=$('#idCard').val();
+            let minDesposit=$('#minDesposit').val();
+            let maxDesposit=$('#maxDesposit').val();
+            let beginTime=$('#beginTime').val();//时间
+            tabIns.reload({//重新加载
+                where:{
+                    "id":id,
+                    "maxRentPrice":maxRentPrice,
+                    "minRentPrice":minRentPrice,
+                    "flag":flag,
+                    "type":type,
+                    "num":num,
+                    "idCard":idCard,
+                    "minDesposit":minDesposit,
+                    "maxDesposit":maxDesposit,
+                    "beginTime":beginTime
+                }
+            })
+        });
+
+        $('#reset').click(function (){
+            $('#searchBtn').click();
+        })
+
+
+        /*
+        行事件
+         */
+        table.on('tool(dataTableFilter)',function (d){
+            let rowData=d.data;
+            let event=d.event;
+            if(event==="edit"){
+                edit2(rowData);
+            }else if(event==="return"){
+                returnCar(rowData);
+            }
+        })
+
+        /**
+         * 编辑车辆
+         * @param rowData
+         */
+
+        function edit2(rowData){
+            let editOps={
+                title:"编辑出租信息",
+                type: 1,
+                content:$('#editTpl').html(),
+                area:['700px','500px'],
+                success(layero,index){
+                    laydate.render({
+                        elem:"#beginTime2",
+                    })
+                    laydate.render({
+                        elem:"#endTime",
+                    })
+                    $('#beginTime2').val(rowData.beginTime);
+                    $('#endTime').val(rowData.endTime);
+                    form.val("editFilter",rowData);
+                    form.render("radio");
+                    form.on("submit(subBtnFilterEdit)",function (d){
+                        let formData=d.field;
+
+                        let beginDate=$("#beginTime2").val();
+                        let endDate=$("#endTime").val();
+                        let d1 = new Date(beginDate.replace(/\-/g, "\/"));
+                        let d2 = new Date(endDate.replace(/\-/g, "\/"));
+
+                        if(beginDate!=""&&endDate!=""&&d1 >=d2)
+                        {
+                            layer.confirm("开始时间不能大于结束时间")
+                            return false;
+                        }
+
+                        //获取车辆的id
+                        formData.id=rowData.id;
+                        $.post("/rent/edit.do",formData,function (rs){
+                            layer.msg(rs.msg);
+                            if(rs.code!=200){
+                                return false;
+                            }
+                            layer.close(index);
+                            $('#searchBtn').click()
+                        })
+                        return false;//阻止默认提交行为
+                    })
+                },
+                btn:['确认','取消'],
+                btnAlign: "c",
+                yes:function (index,layero){
+                    //点击隐藏的提交按钮  触发 表单提交监听
+                    $('#subBtnEdit').click();
+                }
+            }
+            layer.open(editOps)
+        }
+
+        function returnCar(rowData){
+            let returnOps={
+                title:"还车",
+                type:1,
+                content: $('#returnTpl').html(),
+                area:['500px','400px'],
+                success(layero, index) {
+                    form.val('returnFormFilter',rowData);
+                    laydate.render({
+                        elem:'#returnTime'
+                    })
+                    form.on('submit(subBtnFilterReturn)',function (d){
+                        let formData=d.field;
+                        formData.rentId=rowData.id;//这里要换ID
+                        $.post("/return/add.do",formData,function (rs){
+                            layer.msg(rs.msg);
+                            if(rs.code!=200){
+                                return false;
+                            }
+                            layer.close(index);
+                            $('#searchBtn').click()
+                        })
+                        return false;//阻止默认提交行为
+
+                    })
+                },
+                btn:['确认','取消'],
+                btnAlign: "c",
+                yes:function (index,layero){
+                    $('#subBtnReturn').click();
+                }
+            }
+            layer.open(returnOps);
+
+
+        }
+
+
+    })
+</script>
+</body>
+</html>

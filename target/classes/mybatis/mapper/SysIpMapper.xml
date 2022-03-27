@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycz.mapper.SysIpMapper">
+    <resultMap id="SysIpResultMap" type="com.ycz.vo.SysIpVo">
+        <id column="id" property="id"/>
+        <result column="login_address" property="loginAddress"/>
+        <result column="ip" property="ip"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_login_name" property="userLoginName"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+    </resultMap>
+
+    <insert id="insert">
+        insert into sys_ip(ip,login_address,user_id,user_login_name,last_login_time)
+        values (#{ip},#{loginAddress},#{userId},#{userLoginName},#{lastLoginTime})
+    </insert>
+
+    <select id="selectList" resultMap="SysIpResultMap">
+        select * from sys_ip
+        <where>
+            <if test="loginAddress!=null and loginAddress!=''">
+                login_address like concat('%',#{loginAddress},'%')
+            </if>
+            <if test="ip!=null and ip !=''">
+                and ip =#{ip}
+            </if>
+        </where>
+    </select>
+
+
+
+
+
+</mapper>

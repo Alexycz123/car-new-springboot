@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycz.mapper.EmpReturnMapper">
+
+    <resultMap type="com.ycz.vo.EmpReturnVo" id="EmpReturnMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="empId" column="emp_id" jdbcType="INTEGER"/>
+        <result property="returnId" column="return_id" jdbcType="INTEGER"/>
+        <result property="version" column="version" jdbcType="INTEGER"/>
+        <result property="deleted" column="deleted" jdbcType="INTEGER"/>
+        <result property="beginTime" column="begin_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+        <association property="empMaintainer" javaType="com.ycz.domain.EmpMaintainer">
+            <result property="id" column="id"/>
+            <result property="name" column="name"/>
+            <result property="sex" column="sex"/>
+            <result property="phone" column="phone"/>
+            <result property="idCard" column="id_card"/>
+            <result property="address" column="address"/>
+            <result property="version" column="version"/>
+            <result property="deleted" column="deleted"/>
+            <result property="createTime" column="create_time"/>
+            <result property="updateTime" column="update_time"/>
+        </association>
+        <association property="busReturn" javaType="com.ycz.domain.BusReturn">
+            <id property="id" column="id"/>
+            <result property="num" column="num"/>
+            <result property="rentId" column="rent_id"/>
+            <result property="returnTime" column="return_time"/>
+            <result property="rentPrice" column="rent_price"/>
+            <result property="payMoney" column="pay_money"/>
+            <result property="problem" column="problem"/>
+            <result property="totalMoney" column="total_money"/>
+            <result property="userId" column="user_id"/>
+            <result property="createTime" column="create_time"/>
+        </association>
+    </resultMap>
+
+    <select id="selectList" resultMap="EmpReturnMap" parameterType="com.ycz.query.EmpReturnQuery">
+        SELECT
+            er.`id`,
+            er.`begin_time`,
+            er.`end_time`,
+            er.`return_id`,
+            er.`emp_id`,
+            em.`id` eid,
+            em.`id_card`,
+            em.`name`,
+            em.`phone`,
+            br.`num`,
+            br.`problem`,
+            br.`total_money`
+
+        FROM emp_return er,emp_maintainer em,bus_return br
+        WHERE er.emp_id = em.id AND er.return_id=br.id
+        <if test="id!=null and id!=''">
+            and er.id=#{id}
+        </if>
+        <if test="busReturn!=null and busReturn.num!=null and busReturn.num!=''">
+            and br.num like concat ("%",#{busReturn.num},"%")
+        </if>
+        <if test="empMaintainer!=null and empMaintainer.name!=null and empMaintainer.name!=''">
+            and em.name like concat ("%",#{empMaintainer.name},"%")
+        </if>
+
+    </select>
+
+
+
+</mapper>
+

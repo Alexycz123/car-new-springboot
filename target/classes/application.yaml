@@ -1,0 +1,55 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/car?serverTimezone=Hongkong&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    connectionProperties: config.decrypt=true
+  #  filters: mergeStat,config,slf4j
+    initialSize: 1
+    maxActive: 20
+    minIdle: 1
+    maxWait: 6000
+    validationQuery: SELECT 1 FROM DUAL
+    testOnBorrow: false
+    testOnReturn: false
+    testWhileIdle: true
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 25200000
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    logAbandoned: true
+    removeAbandoned: true
+    removeAbandonedTimeout: 1800
+    removeAbandonedTimeoutMillis: 1800000
+
+  thymeleaf:
+    prefix: classpath:/templates/
+  messages:
+    basename: i18n/login
+  redis:
+    port: 6379
+    host: 127.0.0.1   # redis 的配置
+#  jpa:
+#    hibernate:
+#      naming:
+#        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+mybatis:
+  type-aliases-package: com.ycz.domain
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # 日志输出
+
+server:
+  port: 8082
+
+
+# 配置 pagehelper
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+

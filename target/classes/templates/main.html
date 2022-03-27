@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="utf-8">
+    <title>客户管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/resources/css/public.css" media="all">
+    <link rel="stylesheet" href="/resources/layui/css/layui.css" media="all">
+    <script src="/resources/layui/layui.js"></script>
+    <script src="/resources/js/jquery-1.11.0.min.js"></script>
+    <style>
+        .pic_border_orange{
+            /*橙色*/
+            border-radius: 18px;
+            border: 2px solid orange;
+            box-shadow: 0 0 10px 3px orange;
+            height: 150px;
+            width: 150px;
+        }
+        .paginator  {
+            background:#1E9FFF none repeat scroll 0 0;
+            border:1px solid #CCCCCC;color:#FFFFFF;
+            font-weight:bold;margin:5px 4px 0 0;
+            padding:4px 5px 0;}
+        .paginator a{background:#FFFFFF none repeat scroll 0 0;
+            border:1px solid #CCCCCC;color:#1E9FFF;
+            margin:5px 4px 0 0;padding:4px 5px 0;
+            text-decoration:none}
+        .paginator a:hover
+        {background:#1E9FFF none repeat scroll 0 0;border:1px solid #1E9FFF;color:#FFFFFF;}
+
+    </style>
+
+
+</head>
+<body class="layui-layout-body">
+
+<script type="text/html" id="onlineUser">
+
+    <table id="dataTable" lay-filter="dataTableFilter"></table>
+
+</script>
+
+<div class="layui-layout layui-layout-admin">
+
+    <div class="layui-header">
+        <div class="layui-logo" th:text="#{main_title}"></div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img th:src="@{/resources/images/pengyuyan.jpg}" class="layui-nav-img"
+                    id="img"
+                    >
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="#" th:text="#{main_BasicInformation}"></a></dd>
+                    <dd><a href="#" th:text="#{main_closeAll}"></a></dd>
+                    <dd><a th:href="@{/main.do(l='zh_CN')}">中</a></dd>
+                    <dd><a th:href="@{/main.do(l='en_US')}">英</a></dd>
+                    <dd>
+                        <button class="layui-btn layui-btn-sm" id="onlineBtn">
+                            <i></i>
+                            在线人数
+                        </button>
+
+                    </dd>
+                    <dd><a href="/sysuser/logout.do" th:text="#{main_logout}"></a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="/sysuser/logout.do" th:text="#{main_logout}"></a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="user-photo">
+            <a class="img" title="我的头像">
+                <img th:src="@{/resources/images/pengyuyan.jpg}" class="pic_border_orange">
+            </a>
+            <div style="width: 30px;height: 30px"></div>
+            <p ><span th:text="#{main_hello}+'    '+''"></span>
+
+                <span class="userName" th:text="${session.loginUser.loginName}">
+                </span>
+<!--                <span th:text="${loginId}">-->
+<!--                </span>-->
+                <input type="hidden" th:value="${loginId}" id="getUserId">
+                <span th:text="'      ' +   #{main_welcome}"></span> </p>
+        </div>
+        <!--        空白区域-->
+        <div style="width: 50px;height: 50px"></div>
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree">
+                <!-- {include file="common/menu" /}-->
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;" class="site-demo-active" shiro:hasRole="salesman"
+                       th:text="#{main_LeaseManagement}"     th:data-title="#{main_LeaseManagement}"></a>
+                    <dl class="layui-nav-child">
+                        <a data-url="/customer/list.do" data-id="1" shiro:hasRole="salesman"
+                           th:data-title="#{main_Customermanagemen}"
+                           th:text="#{main_Customermanagemen}" class="site-demo-active"
+                           href="javascript:;"
+                           data-type="tabAdd('客户管理','url','1')"
+                        ></a>
+                        <dd><a data-url="/car/list.do" shiro:hasRole="salesman"
+                               data-id="2" th:data-title="#{main_CarManagement}" href="javascript:;"
+                               class="site-demo-active" data-type="tabAdd('车辆管理','url','1')"
+                               th:text="#{main_CarManagement}"></a></dd>
+                        <dd><a data-url="/rent/list.do" shiro:hasRole="salesman"
+                               data-id="3" th:data-title="#{main_rentManagement}"
+                               href="javascript:;" class="site-demo-active"
+                               data-type="tabAdd('出租记录','url','3')" th:text="#{main_rentManagement}"></a></dd>
+                        <dd><a  data-url="/return/list.do" shiro:hasRole="salesman"
+                                data-id="4" th:data-title="#{main_returnManagement}"
+                                href="javascript:;" class="site-demo-active"
+                                data-type="tabAdd('还车记录','url','4')"
+                        th:text="#{main_returnManagement}"></a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;" class="site-demo-active" shiro:hasRole="salesman"
+                       th:text="#{main_mainManagement}"   th:data-title="#{main_mainManagement}"></a>
+                    <dl class="layui-nav-child">
+                        <dd><a data-url="/ins/list.do" shiro:hasRole="salesman"
+                               data-id="7" th:data-title="#{main_ins}" th:text="#{main_ins}"
+                               href="javascript:;"
+                               class="site-demo-active"
+                               data-type="tabAdd('保险公司','url','7')"
+                               ></a></dd>
+                        <dd><a data-url="/emp/list.do" shiro:hasRole="salesman"
+                               data-id="8"  href="javascript:;" th:data-title="#{main_emp}" th:text="#{main_emp}"
+                               class="site-demo-active"
+                               data-type="tabAdd('维修工管理','url','7')" ></a></dd>
+                        <dd><a data-url="/empReturn/list.do" shiro:hasRole="salesman"
+                               data-id="9"  href="javascript:;" th:data-title="#{main_empMain}" th:text="#{main_empMain}"
+                               class="site-demo-active"
+                               data-type="tabAdd('维修工维修管理','url','7')" ></a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed" shiro:hasRole="admin">
+                    <a href="javascript:;" class="site-demo-active" th:text="#{main_SystemManagement}"
+                       th:data-title="#{main_SystemManagement}"></a>
+                    <dl class="layui-nav-child">
+                        <dd><a data-url="/user/list.do"
+                               data-id="6" th:data-title="#{main_userManageMent}"
+                               href="javascript:;"
+                               class="site-demo-active"
+                               data-type="tabAdd('用户管理','url','5')"
+                        th:text="#{main_userManageMent}"></a></dd>
+                        <dd><a data-url="/role/list.do"
+                               data-id="5" th:data-title="#{main_roleManagement}" href="javascript:;"
+                               class="site-demo-active"
+                               data-type="tabAdd('角色管理','url','7')" th:text="#{main_roleManagement}"></a></dd>
+
+                        <dd><a data-url="/permission/list.do"
+                               data-id="11"  href="javascript:;"
+                               th:data-title="#{main_authority}" th:text="#{main_authority}"
+                               class="site-demo-active"
+                               data-type="tabAdd('权限管理','url','7')" ></a></dd>
+                        <dd><a data-url="/ip/list.do"
+                               data-id="13"  href="javascript:;"
+                               th:data-title="#{main_ip}" th:text="#{main_ip}"
+                               class="site-demo-active"
+                               data-type="tabAdd('ip管理','url','7')" ></a></dd>
+                    </dl>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 {__CONTENT__}-->
+        <div>
+            <div class="layui-tab" lay-filter="demo" lay-allowclose="true" style="margin-left: 0px;margin-top: 0px;">
+                <ul class="layui-tab-title">
+                </ul>
+                <ul class="rightmenu" style="display: none;position: absolute;">
+                    <li data-type="closethis" th:text="#{main_closeCurrent}"></li>
+                    <li data-type="closeall" th:text="#{main_closeAll}"></li>
+                </ul>
+                <div class="layui-tab-content">
+
+                </div>
+            </div>
+
+            <div class="site-demo-button" style="margin-bottom: 0;">
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script type="text/html" id="rowBtns">
+        <button class="layui-btn layui-btn-sm" lay-event="sendMsgEvent" id="sendMsgBtn">
+            <i class="layui-icon layui-icon-set"></i>
+            发送消息
+        </button>
+    </script>
+
+
+    <script type="text/html" id="msgPane">
+        <form class="layui-form layui-form-pane"
+              lay-filter="msgFilter" style="height: 500px">
+            <div class="layui-card" style="width: 600px;height: 330px" id="card">
+                <div class="layui-card-header">聊天室</div>
+                <div class="layui-card-body" name="receiveMsg" id="receiveMsg"
+                style="width: 500px;height: 300px">
+                </div>
+            </div>
+
+            <span>
+               <a onclick="sendMsg('pre')"  class="paginator" >上一页</a>
+
+               <a onclick="sendMsg(1)" class="paginator">1</a>
+               <a onclick="sendMsg(2)"  class="paginator">2</a>
+               <a onclick="sendMsg(3)"  class="paginator">3</a>
+               <a onclick="sendMsg(4)"  class="paginator">4</a>
+               <a onclick="sendMsg(5)"  class="paginator">5</a>
+               <a onclick="sendMsg('next')" class="paginator">下一页</a>
+                总共有<input type="text" disabled id="total" class="paginator" style="height: 20px;width: 20px">条，
+               共 <input type="text" disabled id="pageTotal" class="paginator" style="height: 20px;width: 20px">页
+            </span>
+
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">消息</label>
+                <div class="layui-input-block">
+                    <textarea placeholder="请输入消息" name="sendMsg" id="sendMsg" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <button type="button" style="display: none" id="msgSendBtn" lay-submit lay-filter="msgSendBtn"></button>
+        </form>
+    </script>
+
+    <input type="hidden" th:value="${page}" id="page">
+    <input type="hidden" th:value="${limit}" id="limit">
+
+
+    <script th:inline="none">
+
+
+        function show(){
+            var imgid=document.getElementById("img");
+            if(imgid.style.visibility == "visible")
+                imgid.style.visibility = "hidden";
+            else
+                imgid.style.visibility = "visible";
+            setTimeout('show()',700);
+        }
+
+        function getDateTime(){
+            let date=new Date();
+            let year=date.getFullYear();
+            let month=date.getMonth()+1;
+            let day=date.getDate();
+            let hours=date .getHours();
+           let minutes= date.getMinutes(); //获取当前分钟数(0-59)
+            let secondes =date.getSeconds(); //获取当前秒数(0-59)
+            return (year+"-"+month+"-"+day+" " +hours+":"+minutes+":"+secondes);
+        }
+        let rowDataId;
+        //JavaScript代码区域
+        layui.use(['element','layer','table','form'], function(){
+            let $ = layui.jquery;
+            let layer=layui.layer;
+            let form=layui.form;
+            let table=layui.table;
+
+            let element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+            //触发事件
+            var active = {
+                tabAdd: function(url,id,name){
+                    //新增一个Tab项
+                    //新增一个Tab项 传入三个参数，分别对应其标题，tab页面的地址，还有一个规定的id，是标签中data-id的属性值
+                    //关于tabAdd的方法所传入的参数可看layui的开发文档中基础方法部分
+                    element.tabAdd('demo', {
+                        title: name,
+                        content: '<iframe data-frameid="'+id+'" frameborder="0" src="'+url+'" style="width:100%;"></iframe>',
+                        id: id //规定好的id
+                    })
+                    //element.render('tab');
+                    FrameWH();  //计算ifram层的大小
+                },
+                tabChange: function(id) {
+                    //切换到指定Tab项
+                    element.tabChange('demo', id); //根据传入的id传入到指定的tab项
+                },
+                tabDelete: function (id) {
+                    element.tabDelete("demo", id);//删除
+                }
+
+            };
+
+            //当点击有site-demo-active属性的标签时，即左侧菜单栏中内容 ，触发点击事件
+            $('.site-demo-active').on('click', function() {
+                var dataid = $(this);
+
+                //这时会判断右侧.layui-tab-title属性下的有lay-id属性的li的数目，即已经打开的tab项数目
+                if ($(".layui-tab-title li[lay-id]").length <= 0) {
+                    //如果比零小，则直接打开新的tab项
+                    active.tabAdd(dataid.attr("data-url"), dataid.attr("data-id"),dataid.attr("data-title"));
+                } else {
+                    //否则判断该tab项是否以及存在
+
+                    var isData = false; //初始化一个标志，为false说明未打开该tab项 为true则说明已有
+                    $.each($(".layui-tab-title li[lay-id]"), function () {
+                        //如果点击左侧菜单栏所传入的id 在右侧tab项中的lay-id属性可以找到，则说明该tab项已经打开
+                        if ($(this).attr("lay-id") == dataid.attr("data-id")) {
+                            isData = true;
+                        }
+                    })
+                    if (isData == false) {
+                        //标志为false 新增一个tab项
+                        active.tabAdd(dataid.attr("data-url"), dataid.attr("data-id"),dataid.attr("data-title"));
+                    }
+                }
+                //最后不管是否新增tab，最后都转到要打开的选项页面上
+                active.tabChange(dataid.attr("data-id"));
+
+            });
+
+            function FrameWH() {
+                var h = $(window).height() -41- 10 - 60 -10-44 -10;
+                $("iframe").css("height", h + "px");
+            }
+
+            $(window).resize(function () {
+                FrameWH();
+            })
+
+
+            let layOs={
+                id: "dataTableId",
+                elem: "#dataTable",
+                url:  "../sysuser/page.do",
+                page: true,//开启分页
+                content: $('#onlineUser').html(),
+                area: ['200', '400px'],
+                cols: [
+                    [
+                        {field: "id",title: "id号"},
+                        {field: "loginName",title: "用户名"},
+                        {title: "操作", toolbar: "#rowBtns", minWidth: 100, fixed: "right"}
+                    ]
+                ],
+                parseData: function (rs) {
+                    return {
+                        code: rs.code,
+                        msg: rs.msg,
+                        count: rs.data.total,
+                        data: rs.data.list
+                    }
+                },
+                response: {
+                    statusCode: 200
+                }
+
+            }
+
+            $(document).on('click','#onlineBtn',function(){
+                // console.log("asdasdas")
+                // layer.msg('hello');
+                layer.open(layOs)
+                let tableIns=table.render(layOs)
+            });
+
+            table.on('tool(dataTableFilter)',function (d){
+                let rowData=d.data;
+                let event=d.event;
+                console.log(event);
+                if(event==="sendMsgEvent"){
+                    console.log("进来了特么的")
+                    sendMsg(rowData)
+
+                }
+            })
+            //开启页面的时候就连接
+            var websocket = null;
+            if('WebSocket' in window){
+                websocket = new WebSocket("ws://119.23.241.183:8082/websocket/"+$('#getUserId').val());
+                // websocket = new WebSocket("ws://localhost:8082/websocket/"+$('#getUserId').val());
+            }
+            else{
+                alert('Not support websocket')
+            }
+            // 连接发生错误的回调方法
+            websocket.onerror = function(){
+                setMessageInnerHTML("error");
+            };
+            //连接成功建立的回调方法
+            websocket.onopen = function(event){
+                setMessageInnerHTML("open");
+            }
+
+            //接收到消息的回调方法
+            websocket.onmessage = function(event){
+                setMessageInnerHTML(event.data);
+
+            }
+            //连接关闭的回调方法
+            websocket.onclose = function(){
+                setMessageInnerHTML("close");
+            }
+            //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+            window.onbeforeunload = function(){
+                websocket.close();
+            }
+            //将消息显示在网页上
+            function setMessageInnerHTML(innerHTML){
+               // show()
+                layer.msg(innerHTML,
+                    {icon :1,title:'提示',time: 2000,
+                        offset: 'rt'
+                    }
+                )
+                //放在receiveMsg
+                document.getElementById('receiveMsg').innerHTML += innerHTML+'<br>';
+               // 弹窗
+            }
+            //关闭连接
+            function closeWebSocket(){
+                websocket.close();
+            }
+            //发送消息
+            function send(sendMsg){
+                websocket.send(sendMsg);
+            }
+
+
+
+            function sendMsg(rowData){
+                // console.log("asdasdas")
+                // layer.msg('hello');
+                //一直在获取
+                rowDataId=rowData.id;
+                $.get("/sysusermsg/getMsg/"+$('#getUserId').val()+"/"+rowData.id+"/"+$('#page').val()+"/"+$('#limit').val(),    function (rs){
+                    if(rs.code===200){
+                        $('#page').val(rs.data.page)
+                        $('#limit').val(rs.data.limit)
+                        $('#total').val(rs.data.total)
+                        $('#pageTotal').val(rs.data.pageTotal)
+                        console.log(rs.data.list)
+                        for (let i = 0; i < rs.data.list.length; i++) { // 收到了的msg
+                            if(rs.data.list[i].sendUserId==$('#getUserId').val()){//不要全类型相同，因为前面是String，后面int
+                                document.getElementById('receiveMsg').innerHTML +=
+                                    "<font style='color: #009f95'>"+ '我说的：'+ rs.data.list[i].sendTime+'<br>'+
+                                    rs.data.list[i].sendMsg
+                                    +"</font>" +'<br>'
+
+                            }else {
+                                document.getElementById('receiveMsg').innerHTML +=
+                                    "<font style='color: #0C0C0C'>"+ '用户'+rowData.id+'发来消息：'+ rs.data.list[i].sendTime+'<br>'+
+                                        rs.data.list[i].sendMsg +"</font>" +'<br>'
+                            }
+                        }
+
+                    }
+                }
+                )
+
+                console.log(rowData.id) //接受者的id
+
+
+
+                let sendPane={
+                    title:"发送消息",
+                    type: 1,
+                    content: $('#msgPane').html(),
+                    area: ['700px', '550px'],
+
+
+                    success: function (layero,index) {
+                        form.on("submit(msgSendBtn)", function (d) {
+                            let formData=d.field;
+                            console.log("当前登录的id"+$('#getUserId').val())
+                            console.log(formData.sendMsg)
+                            // 发送消息
+                            send(formData.sendMsg+"|"+rowData.id)
+                            //修改receiveMsg
+                            document.getElementById('receiveMsg').innerHTML +=
+                                "<font style='color: #009f95'>"+ '我说的：'+ getDateTime()+'<br>'+
+                                formData.sendMsg +"</font>" +'<br>'
+
+                            $('#sendMsg').val('')//清空输入框
+                            let total=parseInt($('#total').val())+1
+
+                            $('#total').val(total)
+                            if(total    %  parseInt($('#limit').val())==0){
+                                $('#pageTotal').val(total/parseInt($('#limit').val()))
+                            }else {
+                                $('#pageTotal').val(total/parseInt($('#limit').val())+1)
+                            }
+                        })
+                    },
+                    btn: ['确认', '取消'],
+                    btnAlign: "c",
+                    yes: function (index, layero) {
+                        $('#msgSendBtn').click();
+                    },
+
+                }
+
+                layer.open(sendPane)
+
+            }
+
+
+
+        });
+        //可以获得新的rowDataId
+      function  sendMsg(page){
+          console.log("重新获取的"+rowDataId)
+          let newpage;
+          if(page=='next'){
+              newpage=parseInt($('#page').val())+1
+              if(newpage>parseInt($('#pageTotal').val())){
+                  layer.msg("错误，没有更大页数")
+                  return false;
+              }
+              $('#page').val(newpage)
+          }else if(page=='pre'){
+              newpage=parseInt($('#page').val())-1
+              if(newpage<1){
+                  layer.msg("错误，没有更小页数")
+                  return false;
+              }
+              $('#page').val(newpage)
+          }else {
+              if(page>(parseInt($('#pageTotal').val()))){
+                  layer.msg("错误，页数错误")
+                  return false;
+              }
+
+              newpage=page;
+              $('#page').val(newpage)
+          }
+          $.get("/sysusermsg/getMsg/"+$('#getUserId').val()+"/"+rowDataId+"/"+newpage+"/"+$('#limit').val(), function (rs){
+
+                  if(rs.code===200){
+                      document.getElementById('receiveMsg').innerHTML=""
+                      $('#total').val(rs.data.total)
+                      $('#pageTotal').val(rs.data.pageTotal)
+                      console.log(rs.data.list)
+                      for (let i = 0; i < rs.data.list.length; i++) { // 收到了的msg
+                          if(rs.data.list[i].sendUserId==$('#getUserId').val()){//不要全类型相同，因为前面是String，后面int
+                              document.getElementById('receiveMsg').innerHTML +=
+                                  "<font style='color: #009f95'>"+ '我说的：'+ rs.data.list[i].sendTime+'<br>'+
+                                  rs.data.list[i].sendMsg
+                                  +"</font>" +'<br>'
+
+                          }else {
+                              document.getElementById('receiveMsg').innerHTML +=
+                                  "<font style='color: #0C0C0C'>"+ '用户'+rowDataId+'发来消息：'+ rs.data.list[i].sendTime+'<br>'+
+                                  rs.data.list[i].sendMsg +"</font>" +'<br>'
+                          }
+                      }
+
+                  }
+              }
+          )
+      }
+
+    </script>
+
+    <div class="layui-footer" style="text-align: center;">
+        <!-- 底部固定区域 -->
+        524288597@qq.com - 版权说明
+    </div>
+
+</div>
+</body>
+</html>

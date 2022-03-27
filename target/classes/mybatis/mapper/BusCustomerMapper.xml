@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycz.mapper.BusCustomerMapper">
+    <resultMap id="busCustomerresultMap" type="com.ycz.vo.BusCustomerVo">
+        <id column="id" property="id"/>
+        <result property="name" column="name"/>
+        <result column="phone" property="phone"/>
+        <result column="id_card" property="idCard"/>
+        <result column="sex" property="sex"/>
+        <result column="address" property="address"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!-- @mbg.generated -->
+        id, name, phone, phone, address, id_card, sex, create_time,update_time
+    </sql>
+
+    <select id="selectCustomList" resultMap="busCustomerresultMap">
+        select <include refid="Base_Column_List"/>
+        from bus_customer
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="phone != null and phone !=''">
+                and phone=#{phone}
+            </if>
+            <if test="address != null and address != ''">
+                and address like concat('%',#{address},'%')
+            </if>
+            <if test="sex !=null and sex != ''">
+                and sex=#{sex}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="selectCustomer_idCard_phone" resultMap="busCustomerresultMap">
+        select <include refid="Base_Column_List"/>
+        from bus_customer
+        <where>
+            <if test="idCard!=null and idCard!=''">
+                        and id_card=#{idCard}
+                 </if>
+                <if test="phone!=null and phone !=''">
+                    and phone=#{phone}
+                </if>
+        </where>
+    </select>
+
+    <select id="selectCustomer_idCard" resultMap="busCustomerresultMap">
+        select <include refid="Base_Column_List"/>
+        from bus_customer where id_card=#{idCard}
+    </select>
+
+    <select id="selectCustomer" resultMap="busCustomerresultMap">
+        select <include refid="Base_Column_List"/>
+        from bus_customer
+        where id=#{id}
+        and name =#{name}
+        and phone=#{phone}
+        and address=#{address}
+        and id_card=#{idCard}
+        and sex=#{sex}
+    </select>
+
+    <insert id="insertBusCustomer">
+        insert into bus_customer (name,phone,address,id_card,sex,create_time,update_time)
+        values (#{name},#{phone},#{address},#{idCard},#{sex},#{createTime},#{updateTime})
+    </insert>
+
+    <delete id="deleteCustomer">
+        delete from bus_customer where id=#{id}
+    </delete>
+
+    <update id="updateCustomer">
+        update bus_customer set name=#{name},
+                                phone=#{phone},
+                                address=#{address},
+                                id_card=#{idCard},
+                                sex=#{sex},
+                                update_time=#{updateTime}
+            where id=#{id}
+    </update>
+
+    <insert id="batchInsert">
+        insert into bus_customer (name,phone,address,id_card,sex,create_time,update_time)
+        values
+        <foreach collection="customers" item="customer" separator=",">
+            (#{customer.name},#{customer.phone},#{customer.address},
+             #{customer.idCard},#{customer.sex},#{customer.createTime},
+            #{customer.updateTime})
+        </foreach>
+    </insert>
+
+</mapper>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>还车</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/resources/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="/resources/css/public.css" media="all"/>
+</head>
+<body class="childrenBody">
+<form class="layui-form">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">id号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="id号" id="id">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">车牌号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="车牌号" id="num">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">租金</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" class="layui-input" placeholder="￥" id="minRentPrice">
+                    </div>
+
+                    <div class="layui-form-mid">-</div>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" class="layui-input" placeholder="￥" id="maxRentPrice">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn" id="searchBtn" type="button">搜索</button>
+                    <button class="layui-btn layui-btn-primary" type="reset" id="reset">重置</button>
+                </div>
+            </div>
+        </form>
+    </blockquote>
+
+    <table id="dataTable" lay-filter="dataTableFilter"></table>
+
+    <script type="text/html" id="headBtns">
+<!--        <button class="layui-btn layui-btn-sm" lay-event="add2" id="add2" type="button">-->
+<!--            <i class="layui-icon layui-icon-add-1"></i>-->
+<!--            新增-->
+<!--        </button>-->
+<!--        <button class="layui-btn layui-btn-sm" lay-event="delete2" id="delete2" type="button">-->
+<!--            <i class="layui-icon layui-icon-delete"></i>-->
+<!--            删除-->
+<!--        </button>-->
+    </script>
+
+    <script type="text/html" id="rowBtns">
+        <button class="layui-btn layui-btn-sm" lay-event="edit">
+            <i class="layui-icon layui-icon-refresh"></i>
+            修改
+        </button>
+
+        <button class="layui-btn layui-btn-sm" lay-event="maintain">
+            <i class="layui-icon layui-icon-edit"></i>
+            维修
+        </button>
+    </script>
+
+    <script type="text/html" id="returnTpl">
+        <form class="layui-form layui-form-pane" style="padding: 10px" lay-filter="returnFilter">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">车牌号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" readonly name="num" lay-verify="required" lay-reqText="请输入车牌号" placeholder="车牌号" >
+                        </div>
+                    </div>
+
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">问题</label>
+                        <div class="layui-input-inline">
+                            <input type="text"  class="layui-input" name="problem" lay-verify="required" lay-reqText="请输入颜色" placeholder="颜色" >
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="layui-form-item">
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">租金</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input"  name="rentPrice" lay-verify="required|number" lay-reqText="请输入租金" placeholder="租金" >
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label" style="width: 200px">问题所支付的钱</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" name="payMoney"  lay-verify="required|number" lay-reqText="请输入价格" placeholder="价格" >
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">总价格</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" name="totalMoney"  lay-verify="required|number" lay-reqText="请输入价格" placeholder="价格" >
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">返还时间</label>
+                <div class="layui-input-block" style="width:514px">
+                    <input type="text"  name="returnTime"  id="returnTime" class="layui-input"/>
+                </div>
+            </div>
+
+            <button type="button" style="display: none" id="subBtnReturn" lay-submit lay-filter="subBtnFilter"></button>
+        </form>
+    </script>
+
+    <script type="text/html" id="maintainTpl">
+        <form class="layui-form layui-form-pane" style="padding: 10px" lay-filter="maintainFilter">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">维修工</label>
+                    <div class="layui-input-inline">
+                        <select name="empId" required id="maintainSelect">
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">维修时间</label>
+                <div class="layui-input-block" style="width:250px">
+                    <input type="text"  required name="maintainTime"  id="maintainTime" class="layui-input"/>
+                </div>
+            </div>
+
+
+            <button type="button" style="display: none" id="subBtnMaintain" lay-submit lay-filter="subBtnMaintainFilter"></button>
+        </form>
+    </script>
+
+</form>
+<script type="text/javascript" src="/resources/layui/layui.js"></script>
+<script>
+
+    layui.use(['table','jquery','layer','form','upload','laydate'],function () {
+        let table = layui.table;
+        let $ = layui.jquery;
+        let layer = layui.layer;
+        let form = layui.form;
+        let upload=layui.upload;
+        let laydate=layui.laydate;
+        //渲染数据表格
+        //表格参数
+        let tabOps = {
+            id:"dataTableId",
+            elem:"#dataTable",
+            url:"/return/page.do",
+            page:true,//开启分页
+            toolbar:"#headBtns",//头工具栏
+            cols:[[
+                {type:"checkbox"},
+                {field:"id",title:"id号",width: 50},
+                {field:"num",title:"车牌号",minWidth: 120},
+                {field:"rentId",title:"出租id号",width: 80},
+                {field:"problem",title:"问题"},
+                {field:"rentPrice",title:"租金",minWidth: 100},
+                {field:"payMoney",title:"问题所支付的钱",minWidth: 100},
+                {field:"totalMoney",title:"总价格",width: 100},
+                {field:"createTime",title:"创建时间",width: 120},
+                {field:"returnTime",title:"返还时间",width: 120},
+                {field:"userId",title:"负责的ID",width: 50},
+
+                {title:"操作",toolbar:"#rowBtns",minWidth: 200,fixed:"right"}
+            ]
+
+            ],//列数据
+            parseData:function (rs) {
+                return {
+                    code : rs.code,
+                    msg : rs.msg,
+                    count : rs.data.total,
+                    data : rs.data.list
+                }
+            },
+            response:{
+                statusCode:200
+            }
+        };
+
+        let tabIns = table.render(tabOps);
+
+        $("#searchBtn").click(function () {
+            let id = $("#id").val();
+            let maxRentPrice = $("#maxRentPrice").val();
+            let minRentPrice = $("#minRentPrice").val();
+            let num = $("#num").val();
+            tabIns.reload({//重新加载
+                where:{
+                    "id":id,
+                    "maxRentPrice":maxRentPrice,
+                    "minRentPrice":minRentPrice,
+                    "num":num,
+                }
+            })
+        });
+
+        $('#reset').click(function (){
+            $('#searchBtn').click();
+        })
+
+        table.on('tool(dataTableFilter)',function (d){
+            let rowData=d.data;
+            let event=d.event;
+            if(event==="edit"){
+                edit(rowData)
+            }if(event==="maintain"){
+                maintain(rowData)
+            }
+        })
+
+
+
+
+        function maintain(rowData) {
+            let editOps = {
+                    title: "编辑还车车辆",
+                    type: 1,
+                    content: $('#maintainTpl').html(),
+                    area: ['500px', '300px'],
+                    success(layero, index) {
+
+                        laydate.render({
+                            elem:"#maintainTime",
+                            range:"~"
+                        })
+
+                        $.get('/emp/page.do',function (rs){
+                            console.log(rs)
+                            let optionstring = "";
+                            for (let j = 0; j < rs.data.list.length; j++) {
+                                optionstring += "<option value=\"" + rs.data.list[j].id + "\" >" + rs.data.list[j].name + "</option>";
+                                console.log(optionstring)
+                            }
+                            $('#maintainSelect').append("<option value=\"\">选择维修工</option>"+optionstring)
+                            form.render();
+                        })
+
+                        form.on("submit(subBtnMaintainFilter)",function (d){
+                            let formData=d.field;
+                            console.log(formData)
+                            formData.returnId=rowData.id
+                            $.post("/empReturn/postEmpReturn",formData,function (rs){
+                                console.log(rs)
+                                layer.msg(rs.msg);
+                                if (rs.code!=200){
+                                    return false
+                                }
+                                layer.close(index);
+                                $('#searchBtn').click()
+                            })
+                        })
+
+                    },
+                    btn: ['确认', '取消'],
+                    btnAlign: "c",
+                    yes: function (index, layero) {
+                        //点击隐藏的提交按钮  触发 表单提交监听
+                        $('#subBtnMaintain').click();
+                    }
+
+                }
+                layer.open(editOps)
+
+                }
+
+
+        function edit(rowData) {
+            console.log("要修改了")
+            let editOps = {
+                title: "编辑还车车辆",
+                type: 1,
+                content: $('#returnTpl').html(),
+                area: ['800px', '600px'],
+                success(layero, index) {
+
+                    form.val("editFilter",rowData);
+                    laydate.render({
+                        elem:"#returnTime",
+                    })
+                    console.log(rowData.returnTime)
+
+                    form.render("radio");
+
+                    // $('#returnTime').val(rowData.returnTime)
+                    form.val("returnFilter",rowData);
+
+
+                    form.on('submit(subBtnFilter)',function (d){
+                        console.log("点击了提交修改还车")
+                        let formData=d.field;
+                        //获取车辆的id
+                        formData.id=rowData.id;
+                        formData.returnTime=new Date($('#returnTime').val())
+                        $.post("/return/edit.do",formData,function (rs){
+
+                            layer.msg(rs.msg);
+                            if(rs.code!=200){
+                                return false;
+                            }
+                            layer.close(index);
+                            $('#searchBtn').click()
+                        })
+                        return false;//阻止默认提交行为
+
+                    })
+
+                },
+                btn: ['确认', '取消'],
+                btnAlign: "c",
+                yes: function (index, layero) {
+                    //点击隐藏的提交按钮  触发 表单提交监听
+                    $('#subBtnReturn').click();
+                }
+            }
+            layer.open(editOps)
+        }
+
+
+    })
+</script>
+</body>
+</html>

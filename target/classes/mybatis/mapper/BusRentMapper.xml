@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycz.mapper.BusRentMapper">
+    <resultMap id="RentResultMap" type="com.ycz.vo.BusRentVo">
+        <id column="id" property="id"/>
+        <result property="num" column="num"/>
+        <result property="type" column="type"/>
+        <result property="rentPrice" column="rent_price"/>
+        <result property="desposit" column="desposit"/>
+        <result property="name" column="name"/>
+        <result property="idCard" column="id_card"/>
+        <result property="beginTime" column="begin_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="flag" column="flag"/>
+        <result property="userId" column="user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="Rent">
+       id,num,type,rent_price,desposit,name,id_card,begin_time,end_time,
+         flag,user_id,create_time,update_time
+    </sql>
+
+    <insert id="insertRent">
+        insert into bus_rent(num,type,rent_price,desposit,name,id_card,begin_time,end_time,
+         flag,user_id,create_time,update_time)
+
+        values (#{num},#{type},#{rentPrice},#{desposit},#{name},#{idCard},#{beginTime},
+                #{endTime},#{flag},#{userId},#{createTime},#{updateTime})
+    </insert>
+
+    <select id="selectRentByID" resultMap="RentResultMap">
+        select <include refid="Rent"></include>
+        from bus_rent where  id=#{id}
+    </select>
+
+    <select id="selectRentByNum" resultMap="RentResultMap">
+        select <include refid="Rent"></include>
+        from  bus_rent where num=#{num}
+    </select>
+
+    <update id="updateRentFlag">
+        update bus_rent set flag = #{flag} where id = #{id} and flag = #{oldFlag}
+    </update>
+
+    <update id="updateRent">
+        update  bus_rent set rent_price=#{rentPrice},
+                                 desposit=#{desposit},
+                                 begin_time=#{beginTime},
+                                 end_time=#{endTime},
+                                 update_time=#{updateTime}
+                                where id=#{id}
+    </update>
+
+    <select id="selectList" resultMap="RentResultMap">
+        select <include refid="Rent"></include>
+        from bus_rent
+    <where>
+        <if test="id!=null and id!=''">
+            and id=#{id}
+        </if>
+        <if test="num!=null and num!=''">
+            and num like concat('%',#{num},'%')
+        </if>
+        <if test="maxRentPrice!=null and maxRentPrice!=''">
+            and #{maxRentPrice} >=rent_price
+        </if>
+        <if test="minRentPrice!=null and minRentPrice!=''">
+            and rent_price  >=#{minRentPrice}
+        </if>
+        <if test="maxDesposit!=null and maxDesposit!=''">
+            and #{maxDesposit} >=desposit
+        </if>
+        <if test="minDesposit!=null and minDesposit!=''">
+            and  desposit >=#{minDesposit}
+        </if>
+        <if test="flag!=null and flag!=''">
+            and flag=#{flag}
+        </if>
+        <if test="type!=null and type!=''">
+            and type=#{type}
+        </if>
+        <if test="idCard!=null and idCard!=''">
+            and id_card=#{idCard}
+        </if>
+        <if test="minBeginTime != null and minBeginTime != ''">
+            and begin_time >= #{minBeginTime}
+        </if>
+        <if test="maxBeginTime != null and maxBeginTime != ''">
+            and #{maxBeginTime} >= begin_time
+        </if>
+    </where>
+    </select>
+
+</mapper>

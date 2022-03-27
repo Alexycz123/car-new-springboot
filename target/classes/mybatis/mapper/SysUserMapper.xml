@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycz.mapper.SysUserMapper">
+    <resultMap id="BaseResultMap" type="com.ycz.vo.SysUserVo">
+        <id column="id" property="id"/>
+        <result column="login_name" property="loginName"/>
+        <result column="login_password" property="loginPassword"/>
+        <result column="phone" property="phone"/>
+        <result column="realname" property="realname"/>
+        <result column="id_card" property="idCard"/>
+        <result column="sex" property="sex"/>
+        <result column="address" property="address"/>
+        <result column="img" property="img"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        <!-- @mbg.generated -->
+        id, login_name, login_password, phone, realname, id_card, sex, address, img, create_time
+    </sql>
+<!--    这是8001的-->
+    <select id="selectList" resultMap="BaseResultMap" parameterType="com.ycz.query.SysUserQuery">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user
+        <where>
+            <if test="realname != null and realname != ''">
+                and realname like concat('%',#{realname},'%')
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone =#{phone}
+            </if>
+            <if test="address != null and address != ''">
+                and address like concat('%',#{address},'%')
+            </if>
+            <if test="idCard != null and idCard != ''">
+                and id_card =#{idCard}
+            </if>
+            <if test="loginName != null and loginName != ''">
+                and login_name like concat('%',#{loginName},'%')
+            </if>
+            <if test="sex !=null and sex != ''">
+                and sex=#{sex}
+            </if>
+        </where>
+    </select>
+<!--    这是5002的-->
+    <select id="selectList2" resultMap="BaseResultMap" parameterType="com.ycz.query.SysUserQuery">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user
+        <where>
+            <if test="realname != null and realname != ''">
+                and realname like concat('%',#{realname},'%')
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone =#{phone}
+            </if>
+            <if test="address != null and address != ''">
+                and address like concat('%',#{address},'%')
+            </if>
+            <if test="idCard != null and idCard != ''">
+                and id_card =#{idCard}
+            </if>
+            <if test="loginName != null and loginName != ''">
+                and login_name like concat('%',#{loginName},'%')
+            </if>
+            <if test="sex !=null and sex != ''">
+                and sex=#{sex}
+            </if>
+        </where>
+        limit #{page},#{limit}
+    </select>
+<!--    这是5002的-->
+    <select id="getUserCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM sys_user
+        <where>
+            <if test="realname != null and realname != ''">
+                and realname like concat('%',#{realname},'%')
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone =#{phone}
+            </if>
+            <if test="address != null and address != ''">
+                and address like concat('%',#{address},'%')
+            </if>
+            <if test="idCard != null and idCard != ''">
+                and id_card =#{idCard}
+            </if>
+            <if test="loginName != null and loginName != ''">
+                and login_name like concat('%',#{loginName},'%')
+            </if>
+            <if test="sex !=null and sex != ''">
+                and sex=#{sex}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="queryUserByName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user
+        where  login_name=#{username}
+    </select>
+<!--    查询用户名，手机号码，身份证有无重复-->
+    <select id="selectUserByPhone_loginName_idCard" resultMap="BaseResultMap">
+        select   <include refid="Base_Column_List"/>
+        from sys_user
+        <where>
+            <if test="loginName!=null and loginName!=''">
+                and login_name=#{loginName}
+            </if>
+            <if test="phone!=null and phone!=''">
+                and phone=#{phone}
+            </if>
+            <if test="idCard!=null and idCard!=''">
+                and id_card=#{idCard}
+            </if>
+        </where>
+    </select>
+<!--    添加用户-->
+    <insert id="insertUser">
+        insert into sys_user(login_name,login_password, phone, realname, id_card, sex, address)
+        values (#{loginName},#{loginPassword},#{phone},#{realname},#{idCard},#{sex},#{address})
+    </insert>
+<!--    这里要有括号-->
+    <insert id="batchInsert">
+        insert into sys_user (login_name,phone,address,id_card,sex,create_time,img,login_password,realname)
+        values
+        <foreach collection="sysUserVoList" item="sysuser" separator=",">
+            (#{sysuser.loginName},#{sysuser.phone},#{sysuser.address},
+            #{sysuser.idCard},#{sysuser.sex},#{sysuser.createTime},#{sysuser.img},
+             #{sysuser.loginPassword},#{sysuser.realname})
+        </foreach>
+    </insert>
+
+    <delete id="deleteUser">
+        delete from sys_user where id in
+        <foreach collection="ids" item="id" separator="," index="index" open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectPasswordByID" resultType="java.lang.String">
+        select login_password from sys_user where id=#{id}
+    </select>
+
+    <update id="updatePassword">
+        update sys_user set login_password = #{password} where id = #{id}
+    </update>
+
+
+    <delete id="deleteBatchUserByIds">
+        delete from sys_user where id in
+        <foreach collection="ids" item="id" separator="," index="index" open="(" close=")">
+            #{id}
+        </foreach>
+
+
+    </delete>
+
+
+</mapper>

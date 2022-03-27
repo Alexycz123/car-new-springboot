@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- - - - - - - - - - - - - - Header - - - - - - - - - - - - - - - - -->
+
+<header th:fragment="headerBar">
+
+    <a href="index.html" id="logo"><img th:src="@{/resources/userResources/images/logo.png}" alt="Car Dealer" /></a>
+    <div class="widget-container widget_search">
+        <span class="call"><span>+1 234</span> 567-8901</span><br />
+        <span class="adds">12 Street, Los Angeles, CA, 94101</span>
+        <form action="#" id="searchform" method="get" />
+        <p>
+            <input type="text" id="s" placeholder="Search" />
+            <button type="submit" id="searchsubmit"></button>
+        </p>
+        </form><!--/ #searchform-->
+    </div><!--/ .widget-container-->
+
+    <nav id="navigation" class="navigation">
+
+        <ul>
+            <li class="current-menu-item"><a href="index.html">Home</a></li>
+            <li><a href="all-listings.html">Browse By</a>
+                <ul>
+                    <li><a href="all-listings.html">All Listings</a></li>
+                    <li><a href="#">Manufacturer</a>
+                        <ul>
+                            <li><a href="one-products.html">Aston Martin</a></li>
+                            <li><a href="one-products.html">Audi</a></li>
+                            <li><a href="one-products.html">BMW</a></li>
+                            <li><a href="one-products.html">Chevrolet</a></li>
+                            <li><a href="one-products.html">Mercedes Benz</a></li>
+                            <li><a href="one-products.html">Ferrari</a></li>
+                            <li><a href="one-products.html">Lexus</a></li>
+                            <li><a href="one-products.html">Porsche</a></li>
+                            <li><a href="one-products.html">Toyota</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#">Body Type</a></li>
+                    <li><a href="#">Engine Size</a></li>
+                    <li><a href="#">Mileage</a></li>
+                    <li><a href="#">Model Year</a></li>
+                    <li><a href="#">Price Range</a></li>
+                    <li><a href="#">Transmission</a></li>
+                </ul>
+            </li>
+            <li><a href="blog.html">Blog</a>
+                <ul>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Blog Single</a></li>
+                </ul>
+            </li>
+            <li><a href="#">News</a></li>
+            <li><a href="#">Sales Reps</a></li>
+            <li><a href="#">Pages</a>
+                <ul>
+                    <li><a href="#">Compare Listings</a></li>
+                    <li><a href="#">404 Page</a></li>
+                    <li><a href="#">Images and Floats</a></li>
+                    <li><a href="#">Pricing Tables</a></li>
+                    <li><a href="#">Typography</a></li>
+                    <li><a href="#">FAQ Toggle</a></li>
+                    <li><a href="#">Column Layout</a></li>
+                </ul>
+            </li>
+            <li><a href="contact.html">Contacts</a></li>
+        </ul>
+
+    </nav><!--/ #navigation-->
+
+</header><!--/ #header-->
+</html>

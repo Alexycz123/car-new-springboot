@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycz.mapper.BusReturnMapper">
+    <resultMap id="BaseResultMap" type="com.ycz.vo.BusReturnVo">
+        <id property="id" column="id"/>
+        <result property="num" column="num"/>
+        <result property="rentId" column="rent_id"/>
+        <result property="returnTime" column="return_time"/>
+        <result property="rentPrice" column="rent_price"/>
+        <result property="payMoney" column="pay_money"/>
+        <result property="problem" column="problem"/>
+        <result property="totalMoney" column="total_money"/>
+        <result property="userId" column="user_id"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="Return">
+        id,num,rent_id,return_time,rent_price,pay_money,problem,total_money,user_id,create_time
+    </sql>
+
+    <insert id="insertReturn">
+        insert into bus_return
+        (num, rent_id, return_time, rent_price, pay_money, problem, total_money, user_id,create_time)
+            value
+            (#{num}, #{rentId}, #{returnTime}, #{rentPrice}, #{payMoney}, #{problem}, #{totalMoney}, #{userId} ,#{createTime})
+    </insert>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        select  <include refid="Return"></include>
+        from bus_return
+        <where>
+            <if test="id!=null and id!=''">
+                and id=#{id}
+            </if>
+            <if test="num!=null and num!=''">
+                and num like concat('%',#{num},'%')
+            </if>
+            <if test="maxRentPrice!=null and maxRentPrice!=''">
+                and #{maxRentPrice}  >= rent_price
+            </if>
+            <if test="minRentPrice!=null and minRentPrice!=''">
+                and  rent_price >= #{minRentPrice}
+            </if>
+
+        </where>
+    </select>
+
+</mapper>

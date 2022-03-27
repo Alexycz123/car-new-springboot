@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>汽车租凭</title>
+    <link rel="icon" th:href="@{/resources/images/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/resources/layui/css/layui.css}">
+</head>
+<body    style="background-image: url('/resources/images/index.jpg');
+background-repeat: no-repeat;background-size: cover;-webkit-background-size: cover;background-attachment: fixed;">
+<div style="width: 400px;height: 480px;position: absolute;top: 35%;left: 50%;margin-top: -125px;margin-left: -200px;border: #dddddd 1px solid;box-shadow:  2px 2px 10px #909090;border-radius: 3%">
+    <form class="layui-form layui-form-pane">
+        <p style="text-align: center;height: 40px;line-height: 40px;font-size: 25px;font-weight: bold;color: #1E9FFF;margin-bottom: 10px" th:text="#{login_title}"></p>
+        <div class="layui-form-item" style="margin-left: 30px;">
+            <label class="layui-form-label" th:text="#{login_username}"></label>
+            <div class="layui-input-inline">
+                <input type="text" value="admin"
+                       autocomplete="off"
+                       name="loginName"
+                       class="layui-input"
+                       th:placeholder="#{login_pleaseusername}"
+                       lay-verify="required"
+                       lay-reqText="请输入用户名">
+            </div>
+        </div>
+        <div class="layui-form-item" style="margin-left: 30px;">
+            <label class="layui-form-label" th:text="#{login_password}"></label>
+            <div class="layui-input-inline">
+                <input type="password" value="admin"
+                       autocomplete="off"
+                       name="loginPassword"
+                       class="layui-input"
+                       th:placeholder="#{login_pleasepassword}"
+                       lay-verify="required"
+                       th:lay-reqText="#{login_pleasepassword}">
+            </div>
+        </div>
+
+        <div class="layui-form-item" style="margin-left: 30px;">
+            <label class="layui-form-label" th:text="#{login_code}"></label>
+            <div class="layui-input-inline">
+                <input type="text" name="verifycode"  class="layui-input" id="verifycode" th:placeholder="#{login_pleaseCode}"
+                       lay-verify="required"
+                />
+                <div style="height: 30px"></div>
+                <a href="javascript:refreshCode()">
+                    <img src="vcode" title="看不清点击刷新" id="vcode"/></a>
+            </div>
+        </div>
+
+
+
+        <div class="layui-form-item" style="margin-left: 30px;">
+<!--                  这是滑动块&#45;&#45;-->
+            <div class="layui-input-inline" style="width: 300px">
+                <div id="slider"></div>
+            </div>
+
+        </div>
+        <div class="layui-form-item" style="margin-left: 30px;margin-top: 30px">
+            <div class="layui-input-inline">
+                <button class="layui-btn"
+                        style="width: 300px"
+                        type="button"
+                        lay-submit id="subBtn"
+                        lay-filter="subBtnFilter" th:text="#{login_btn}"></button>
+            </div>
+        </div>
+        <div class="layui-form-item" style="margin-left: 142px;margin-top: 30px">
+            <div class="layui-input-inline">
+                <a th:href="@{/index(l='zh_CN')}" class="layui-btn layui-btn-xs layui-btn " >中文</a>
+                <a th:href="@{/index(l='en_US')}" class="layui-btn layui-btn-xs layui-btn " >English</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script th:src="@{/resources/layui/layui.js}"></script>
+<script type="text/javascript">
+
+    window.onload=function (){
+        refreshCode()
+    }
+    //开始就发送验证码
+    let  img = document.getElementById("vcode");
+    let refreshCode=function (){
+        img.src = "../sysuser/checkCodeServlet.do?" + new Date().getTime();
+    }
+
+
+    layui.config({base: 'resources/sliderVerify/'
+    }).use(['form', 'jquery', 'layer', ], function () {
+        let form = layui.form;
+        let $ = layui.jquery;
+        let layer = layui.layer;
+        //表单的提交事件
+        form.on("submit(subBtnFilter)", function (d) {
+            let param = d.field;//获取表单数据
+            $.post("../sysuser/login.do", param, function (rs) {
+                if (rs.code != 200) {
+                    layer.msg(rs.msg);
+                    return false;
+                }
+                //跳转到管理界面主页
+                location.href ="/main.do";
+            })
+            return false;//阻止表单默认提交行为
+        })
+    })
+</script>
+</body>
+</html>
